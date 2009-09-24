@@ -1,0 +1,10 @@
+<configure xmlns="http://namespaces.zope.org/zope">
+
+  <!-- Adapters -->
+  <adapter
+      for=".interfaces.rating.IMemberData"
+      provides=".interfaces.rating.IRateable"
+      factory=".adapters.Rateable"
+      />
+
+</configure>
