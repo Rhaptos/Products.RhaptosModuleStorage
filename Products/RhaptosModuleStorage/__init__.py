@@ -10,7 +10,7 @@ Public License Version 2.1 (LGPL).  See LICENSE.txt for details.
 import sys
 from Products.CMFCore import utils
 import ModuleDBTool
-import ModuleVersionFolder
+#import ModuleVersionFolder
 
 this_module = sys.modules[ __name__ ]
 product_globals = globals()

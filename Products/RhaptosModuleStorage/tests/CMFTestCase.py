@@ -17,7 +17,7 @@ import time
 
 portal_name  = 'portal'
 portal_owner = 'portal_owner'
-default_user = ZopeTestCase._user_name
+#default_user = ZopeTestCase._user_name
 
 
 class CMFTestCase(ZopeTestCase.PortalTestCase):
@@ -42,7 +42,7 @@ def setupCMFSite(app=None, id=portal_name, quiet=0):
 
 
 # Create a Plone site in the test (demo-) storage
-app = ZopeTestCase.app()
-setupCMFSite(app)
-ZopeTestCase.close(app)
+#app = ZopeTestCase.app()
+#setupCMFSite(app)
+#ZopeTestCase.close(app)
 

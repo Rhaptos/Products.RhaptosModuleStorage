@@ -1,7 +1,7 @@
 #
 # RhaptosModuleStorage tests
 #
-
+"""
 import os, sys, shutil, stat, psycopg
 if __name__ == '__main__':
     execfile(os.path.join(sys.path[0], 'framework.py'))
@@ -16,7 +16,7 @@ from Testing import ZopeTestCase
 
 
 ZopeTestCase.installProduct('RhaptosModuleEditor')
-
+"""
 # Global Database options for testing.  You may have to change these 
 DB_OPTS = {
     'admin':'postgres',
@@ -28,7 +28,8 @@ DB_OPTS = {
     'port':None
     }
 
-class TestModuleVersionStorage(RhaptosTestCase):
+#class TestModuleVersionStorage(RhaptosTestCase):
+class TestModuleVersionStorage:
     """Test the VersionStorage methods """
 
     def _safeDropDB(self):
@@ -244,7 +245,7 @@ class TestModuleVersionStorage(RhaptosTestCase):
         message = 'TEST PUBLISH'
         objectId = self.content.publishObject(self.ob1, message)
         self.assertEquals(self.storage.isUnderVersionControl(self.ob1), True)
-
+"""
 if __name__ == '__main__':
     framework()
 else:
@@ -253,4 +254,4 @@ else:
         suite = unittest.TestSuite()
         suite.addTest(unittest.makeSuite(TestModuleVersionStorage))
         return suite
-
+"""
