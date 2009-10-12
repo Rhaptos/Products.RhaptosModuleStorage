@@ -344,11 +344,16 @@ class ModuleView(SimpleItem):
             # Assume context is the URL of a collection
             # FIXME: this isn't very robust...
             (scheme, netloc, path, params, query, fragment) = urlparse(context)
+            portal_url = getToolByName(self, 'portal_url')
+            portal_path = portal_url.getPortalPath()
+            # if path includes portal path strip it out
+            if path.startswith(portal_path):
+                path = path[len(portal_path):]
             # Strip off the leading slash so the traversal will be done
             # from portal root, not Zope root
             if path.startswith('/'):
                 path = path[1:]
-            course = self.portal_url.getPortalObject().restrictedTraverse(path)
+            course = portal_url.getPortalObject().restrictedTraverse(path)
             lm_links = course.getContainedObject(self.objectId).getLinks()
         else:
             lm_links = self.getLinks()
