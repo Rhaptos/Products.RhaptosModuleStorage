@@ -21,7 +21,7 @@ from Products.CMFCore.utils import getToolByName
 from OFS.SimpleItem import SimpleItem
 from Globals import InitializeClass
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
-from Products.CMFCore.CMFCorePermissions import View, ManagePortal
+from Products.CMFCore.permissions import View, ManagePortal
 
 from interfaces.portal_moduledb import portal_moduledb as IModuleDBTool
 from ZSQLFile import ZSQLFile
