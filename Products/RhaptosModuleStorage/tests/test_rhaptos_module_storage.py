@@ -36,7 +36,16 @@ class TestRhaptosModuleStorage(RhaptosTestCase):
     def setUp(self):
         RhaptosTestCase.setUp(self)
 
-    def test_bug_tracking_tool(self):
+    def test_module_version_storage(self):
+        self.assertEqual(1, 1)
+
+    def test_module_view(self):
+        self.assertEqual(1, 1)
+
+    def test_module_file(self):
+        self.assertEqual(1, 1)
+
+    def test_rhaptosdb_iterator(self):
         self.assertEqual(1, 1)
 
 
