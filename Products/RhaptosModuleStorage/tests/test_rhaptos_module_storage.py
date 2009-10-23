@@ -26,20 +26,18 @@ $Id: $
 
 import Products.RhaptosModuleStorage
 
-from Products.RhaptosTest import base
+from Products.RhaptosTest.base import RhaptosTestCase
 
 
-base.PRODUCTS_TO_LOAD_ZCML = [('configure.zcml', Products.RhaptosModuleStorage),]
-base.PRODUCTS_TO_INSTALL = ['RhaptosModuleStorage',]
+class TestRhaptosModuleStorage(RhaptosTestCase):
 
+    products_to_load_zcml = [('configure.zcml', Products.RhaptosModuleStorage),]
 
-# TODO:  I need to set up a Z Psycoppg database connection here.
+    def setUp(self):
+        RhaptosTestCase.setUp(self)
 
-
-class TestRhaptosModuleStorage(base.RhaptosTestCase):
-
-    def test_pass(self):
-        assert 1 == 1
+    def test_bug_tracking_tool(self):
+        self.assertEqual(1, 1)
 
 
 def test_suite():
