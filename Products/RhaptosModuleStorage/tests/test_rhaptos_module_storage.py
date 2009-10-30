@@ -24,26 +24,28 @@ $Id: $
 """
 
 
+from Products.RhaptosTest import config
 import Products.RhaptosModuleStorage
+config.products_to_load_zcml = [('configure.zcml', Products.RhaptosModuleStorage),]
+config.products_to_install = ['RhaptosModuleStorage']
 
 from Products.CMFDefault.Document import Document
 from Products.RhaptosModuleStorage.ModuleVersionFolder import ModuleVersionStorage
 from Products.RhaptosModuleStorage.ModuleView import ModuleFile
 from Products.RhaptosModuleStorage.ModuleView import ModuleView
-from Products.RhaptosTest.base import RhaptosTestCase
+from Products.RhaptosTest import base
 
 
-class TestRhaptosModuleStorage(RhaptosTestCase):
+class TestRhaptosModuleStorage(base.RhaptosTestCase):
 
-    products_to_load_zcml = [('configure.zcml', Products.RhaptosModuleStorage),]
-    products_to_install = ['FSImportTool', 'LinkMapTool', 'ExtZSQL', 'CNXMLDocument', 'RhaptosModuleStorage']
-
-    def setUp(self):
-        RhaptosTestCase.setUp(self)
+    def afterSetUp(self):
         self.doc = Document('foo bar')
         self.module_version_storage = ModuleVersionStorage('test_module_version_storage')
 #        self.module_file = ModuleFile()
 #        self.module_view = ModuleView()
+
+    def beforeTearDown(self):
+        pass
 
     def test_module_version_storage(self):
         self.assertEqual(1, 1)
