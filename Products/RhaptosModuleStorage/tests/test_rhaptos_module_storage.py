@@ -28,6 +28,7 @@ from Products.RhaptosTest import config
 import Products.RhaptosModuleStorage
 config.products_to_load_zcml = [('configure.zcml', Products.RhaptosModuleStorage),]
 config.products_to_install = ['RhaptosModuleStorage']
+config.extension_profiles = ['Products.RhaptosModuleStorage:default']
 
 from Products.CMFDefault.Document import Document
 from Products.RhaptosModuleStorage.ModuleVersionFolder import ModuleVersionStorage
