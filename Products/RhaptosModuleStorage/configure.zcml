@@ -16,4 +16,13 @@
       factory=".adapters.Rateable"
       />
 
+  <!-- Interface marking -->
+  <content class="Products.RhaptosModuleStorage.ModuleView.ModuleView">
+    <implements interface="Products.CNXMLDocument.newinterfaces.ICNXMLContainer" />
+  </content>
+
+  <content class="Products.RhaptosModuleStorage.ModuleView.ModuleView">
+    <implements interface="Products.CNXMLDocument.newinterfaces.ICNXMLAbstract" />
+  </content>
+
 </configure>

@@ -21,6 +21,7 @@ from OFS.PropertyManager import PropertyManager
 from ExtensionClass import Base
 from AccessControl import ClassSecurityInfo
 from Globals import InitializeClass
+from Globals import package_home
 from DateTime import DateTime
 from zope.component import getAdapter
 from zope.event import notify
@@ -35,6 +36,9 @@ from Products.RhaptosRepository.interfaces.IVersionStorage import IVersionStorag
 from Products.CMFCore.CMFCorePermissions import View, ModifyPortalContent
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import PloneMessageFactory as _
+
+from Products.CNXMLTransforms.config import GLOBALS as CNXMLTRANSFORMS_GLOBALS
+from Products.CNXMLTransforms.config import PROJECTNAME as CNXMLTRANSFORMS
 
 from ModuleView import ModuleView
 from ModuleDBTool import CommitError
@@ -195,9 +199,18 @@ class ModuleVersionStorage(SimpleItem):
         if not objmethod is None:
             objmethod(origobj)
 
-        ### For now, we're just going to call this directly, but in the future,
+        ### For now, we're just going to call these directly, but in the future,
         ### it should subscribe to the event for VersionFolders being published
+        # lens notification
         self.lens_tool.notifyLensContainedObject(object)
+        
+        # queue insertions
+        qtool = getToolByName(self, 'queue_tool')
+        key = "modexport_%s" % object.objectId
+        dictRequest = { "id":object.objectId,
+                        "version":object.version }
+        qtool.add(key, dictRequest,
+                  "%s/zctl/create_and_store_pub_module_export.zctl" % CNXMLTRANSFORMS)
         ### End Event System Hack
 
     def deleteObject(self, objectId, version=None):

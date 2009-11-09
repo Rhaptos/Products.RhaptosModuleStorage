@@ -1,3 +1,11 @@
+RhaptosModuleStorage-0.45
+  - collection-structure-redesign-1 (Oct. 22, 2009)
+    - mark ModuleView as able to render abstract and body separately
+    - SQL for abstract wrapping modified to strip tags, to support CNXML in abstract
+    - ModuleView gets 'isPublic' method, now common API to all content-ish objects
+    - handle possibility of unicode CNXML/MDML in several places
+    - publish event inserts queue event for module zip export creation
+
 RhaptosModuleStorage-0.44
   - content-actions-move (17 Aug 2009)
     - store Google Analytics tracking code on VersionFolders, show on published content where set

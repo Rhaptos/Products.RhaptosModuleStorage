@@ -148,6 +148,13 @@ class ModuleView(SimpleItem):
         else:
             return self.default()
 
+    security.declarePublic('isPublic')
+    def isPublic(self):
+        """Boolean answer true iff collection is in versioned repository.
+        Based currently on value of 'state' attribute.
+        """
+        return True
+
     security.declarePublic('url')
     def url(self):
         """Return the canonical URL used to access the object"""
@@ -469,7 +476,10 @@ class ModuleView(SimpleItem):
                 wd = tempfile.mkdtemp()
                 export = self.module_export_cnxml()
                 export_file = open(os.path.join(wd, 'export.cnxml'), 'wb')
-                export_file.write(export)
+                if type(export) is unicode:
+                    export_file.write(export.encode('utf-8'))
+                else:
+                    export_file.write(export)
                 export_file.close()
         
                 files = self.objectIds()
