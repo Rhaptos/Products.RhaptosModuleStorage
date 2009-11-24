@@ -209,8 +209,9 @@ class ModuleVersionStorage(SimpleItem):
         key = "modexport_%s" % object.objectId
         dictRequest = { "id":object.objectId,
                         "version":object.version }
+        cnxmltransforms_location = package_home(CNXMLTRANSFORMS_GLOBALS)
         qtool.add(key, dictRequest,
-                  "%s/zctl/create_and_store_pub_module_export.zctl" % CNXMLTRANSFORMS)
+                  "%s/zctl/create_and_store_pub_module_export.zctl" % cnxmltransforms_location)
         ### End Event System Hack
 
     def deleteObject(self, objectId, version=None):
