@@ -11,6 +11,7 @@ Public License Version 2.1 (LGPL).  See LICENSE.txt for details.
 
 import zLOG
 import re
+import os
 import Acquisition
 import AccessControl
 from psycopg import ProgrammingError, IntegrityError
@@ -209,9 +210,9 @@ class ModuleVersionStorage(SimpleItem):
         key = "modexport_%s" % object.objectId
         dictRequest = { "id":object.objectId,
                         "version":object.version }
-        cnxmltransforms_location = package_home(CNXMLTRANSFORMS_GLOBALS)
+        script_location = 'SCRIPTSDIR' in os.environ and os.environ['SCRIPTSDIR'] or '.'
         qtool.add(key, dictRequest,
-                  "%s/zctl/create_and_store_pub_module_export.zctl" % cnxmltransforms_location)
+                  "%s/create_and_store_pub_module_export.zctl" % script_location)
         ### End Event System Hack
 
     def deleteObject(self, objectId, version=None):
