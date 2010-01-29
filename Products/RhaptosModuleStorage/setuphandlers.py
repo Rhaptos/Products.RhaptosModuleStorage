@@ -278,4 +278,7 @@ def installdb(self):
     schema = open(ph+'/sql/states.sql','r').read()
     db.manage_test(query=schema)
     out.write("Initialized module states\n")
+    schema = open(ph+'/sql/roles.sql','r').read()
+    db.manage_test(query=schema)
+    out.write("Initialized roles\n")
     return out.getvalue()
