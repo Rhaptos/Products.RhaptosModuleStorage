@@ -394,7 +394,7 @@ class ModuleView(SimpleItem):
         else:
             return self.id
 
-                
+
     security.declarePublic('source')
     def source(self):
         """Get module source"""
@@ -403,6 +403,112 @@ class ModuleView(SimpleItem):
         if self.REQUEST.REQUEST_METHOD == 'HEAD': return 
         return self.normalize()
 
+
+    security.declarePublic('update_source')
+    def update_source(self):
+        """Get module source"""
+        self.REQUEST.RESPONSE.setHeader('Content-Type', "application/xml")
+        self._setLastModHeader()
+        if self.REQUEST.REQUEST_METHOD == 'HEAD': return 
+        # return self.normalize() # self.getDefaultFile().normalize()
+        cnxmlfile = self.getDefaultFile()
+        cnxmlfile.setFeaturedLinks(links=self.getContextLinks())
+        dictMetadata = self.getMetadata()
+        # need to add a faux dictionary entry for key 'actors'
+        mtool = getToolByName(self, 'portal_membership')
+        uniqs = set()
+        for r in ['authors', 'maintainers', 'licensors', 'editors', 'translators']:
+            rolelist = dictMetadata.get(r, [])
+            for uid in rolelist:
+                uniqs.add(uid)
+        actors = []
+        for uid in uniqs:
+            m = mtool.getMemberById(uid)
+            mdata = {}
+            mdata['id'] = uid
+            mdata['shortname'] = m.getProperty('shortname')
+            mdata['firstname'] = m.getProperty('firstname')
+            mdata['surname'] = m.getProperty('surname')
+            mdata['fullname'] = m.getProperty('fullname')
+            mdata['email'] = m.getProperty('email')
+            mdata['account_type'] = m.getProperty('account_type')
+            actors.append(mdata)
+        dictMetadata['actors'] = actors
+        #
+        #
+        #import pdb; pdb.set_trace()
+        #
+        #
+        # update the index.cnxml with new metadata
+        cnxmlfile.setMetadata(metadata=dictMetadata)
+        listErrors = cnxmlfile.validate()
+        isValid = ( len(listErrors) == 0 )
+        if isValid:
+            # slam the cnxml into the DB
+            return cnxmlfile.normalize()
+        else:
+            # do the error thing
+            return "EPIC FAIL"
+
+    security.declarePublic('getMetadata')
+    def getMetadata(self):
+        """ Return the metdata for this module as a dictionary.
+metadata/repository (optional)
+metadata/url (optional)
+metadata/objectId
+metadata/title
+metadata/shorttitle (optional)
+metadata/subtitle (optional)
+metadata/version
+metadata/created
+metadata/revised
+metadata/actors
+metadata['authors']
+metadata['maintainers']
+metadata['licensors']
+metadata['editors'] (optional)
+metadata['translators'] (optional)
+metadata/license
+metadata/extentedattribution (optional, not released yet)
+metadata/parent (optional)
+metadata/keywords (optional)
+metadata/subject (optional?)
+metadata/abstract
+metadata/language
+metadata/homepage (optional)
+metadata/institution (optional)
+metadata/coursecode (optional)
+metadata/instructor (optional)
+        """
+        metadata = {}
+
+        repos = getToolByName(self, 'content')
+        metadata['repository'] = repos.absolute_url()
+        metadata['url'] = self.url
+        metadata['objectId'] = self.objectId
+        metadata['title'] = self.title
+        #metadata['shorttitle'] = self.shorttitle
+        #metadata['subtitle'] = self.subtitle
+        metadata['version'] = self.version
+        metadata['created'] = self.created
+        metadata['revised'] = self.revised
+        metadata['authors'] = self.authors
+        metadata['maintainers'] = self.maintainers
+        metadata['licensors'] = self.licensors
+        for role,members in self.roles.items():
+            metadata[role] = members
+        metadata['license'] = self.license
+        versionFolder = self.aq_parent
+        metadata['parent'] = { 'url':versionFolder.url() }
+        metadata['keywords'] = self.keywords
+        metadata['subject'] = self.subject
+        metadata['abstract'] = self.abstract # aka summary
+        metadata['language'] = self.language
+
+        # metadataTemplate.zpt needs metadata['actors']
+        # which this method's caller will need to populate
+
+        return metadata
 
     security.declarePrivate('default')
     def default(self):
