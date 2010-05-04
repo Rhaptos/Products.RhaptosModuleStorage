@@ -167,6 +167,11 @@ class ModuleVersionStorage(SimpleItem):
         # Create new metadata from template
         # FIXME: we should also change the ID in the text if appropriate
         file = object.getDefaultFile()
+        # SERIOUS VOODOO:
+        # file.setMetadata() turns file.data into a unicode string
+        # file.setTitle() turns file.data back into a regular string, since object.Title() is a regular string
+        # the below call to insertModuleVersion() blows up, if file.data is a unicode string
+        # thus, the order of the two calls below is _important_ and object.Title() better be a regular string
         file.setMetadata(object.getMetadata())
         file.setTitle(object.Title())
 
