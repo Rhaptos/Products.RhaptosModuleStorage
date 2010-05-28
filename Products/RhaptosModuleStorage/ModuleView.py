@@ -408,29 +408,20 @@ class ModuleView(SimpleItem):
     def default(self):
         """Make render() the default method for viewing ZRhaptosModules"""
         REQUEST = self.REQUEST
-        request_format = REQUEST.get('format','')
-        if request_format == 'pdf' or request_format == 'epub':
+        if REQUEST.get('format','') == 'pdf':
             self._setLastModHeader()
             if REQUEST.REQUEST_METHOD == 'HEAD':
                 return  # HEAD short-circuiting
-
-            if self.id == 'latest':  # Redirect to specific version: 302 since it'll change w/ each publish
+            elif self.id == 'latest':  # Redirect to specific version: 302 since it'll change w/ each publish
                 path = self.REQUEST.URL2 + '/' + self.version 
                 path = path + '/?' + self.REQUEST.QUERY_STRING
                 self.REQUEST.RESPONSE.redirect(path, status=302)
                 return
-
             if self.testIfModSince():
-                #True is 'not modified'; status code 304 is also 'not modified'
+                #True is 'not modified'
                 REQUEST.RESPONSE.setStatus(304)
                 return
-
-            if request_format == 'pdf':
-                return self.downloadPDF()
-            else:
-                return self.downloadEPUB()
-        elif request_format == 'offline':
-            return self.downloadOfflineZip()
+            return self.downloadPDF()
         else:
             return self.module_render()
 
@@ -461,65 +452,14 @@ class ModuleView(SimpleItem):
         """Get modules's normalized source"""
         return self.getDefaultFile().normalize()
 
-    security.declarePrivate('downloadOfflineZip')
-    def downloadOfflineZip(self):
-        """Returns a PDF version of the module
-        return the ePub file from the PrintTool storage, if possible.
-        if not possible, returns nothing.
-
-        Returns:
-            EPUB file or nothing
-        """
-        request = self.REQUEST
-        module_id = self.objectId
-        module_version = self.version
-        ptool = getToolByName(self,'rhaptos_print')
-
-        file = ptool.getFile(module_id, module_version, 'offline.zip')
-        bIsOfflineZipFileCached = ( file is not None and file.get_size() > 0 )
-        if not bIsOfflineZipFileCached:
-            file = None
-
-        if file is not None:
-            offlinezipfilename = '%s_%s_offline.zip' % (module_id,module_version)
-            request.RESPONSE.setHeader('Content-Type', 'application/zip')
-            request.RESPONSE.setHeader('Content-Disposition', 'attachment; filename=%s' % offlinezipfilename)
-
-        return file
-
-    security.declarePrivate('downloadEPUB')
-    def downloadEPUB(self):
-        """Returns a PDF version of the module
-        return the ePub file from the PrintTool storage, if possible.
-        if not possible, returns nothing.
-
-        Returns:
-            EPUB file or nothing
-        """
-        request = self.REQUEST
-        module_id = self.objectId
-        module_version = self.version
-        ptool = getToolByName(self,'rhaptos_print')
-
-        file = ptool.getFile(module_id, module_version, 'epub')
-        bIsEpubFileCached = ( file is not None and file.get_size() > 0 )
-        if not bIsEpubFileCached:
-            file = None
-
-        if file is not None:
-            epubfilename = '%s_%s.epub' % (module_id,module_version)
-            request.RESPONSE.setHeader('Content-Type', 'application/epub+zip')
-            request.RESPONSE.setHeader('Content-Disposition', 'attachment; filename=%s' % epubfilename)
-
-        return file
 
     security.declarePrivate('downloadPDF')
     def downloadPDF(self):
         """Returns a PDF version of the module
         Checks for status in RhaptosPrintTool.  If it is 'failed', method returns
         if it is succeeded, tries to get PDF from RhaptosPrintTool.
-        If is not there, the PDF is generated on-demand and added to RhaptosPrintTool
-
+        If is not there, the PDF is generated and added to RhaptosPrintTool
+        
         Returns:
             PDF file or nothing
         """
