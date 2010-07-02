@@ -688,6 +688,15 @@ class ModuleView(SimpleItem):
     def getIcon(self, *args):
         """CMF Combatibility method"""
         return self.icon
+    
+    security.declarePublic('enqueue')    
+    def enqueue(self):
+        qtool = getToolByName(self, 'queue_tool')
+        key = "modexport_%s" % self.objectId
+        dictRequest = { "id":self.objectId,
+                        "version":self.version }
+        script_location = 'SCRIPTSDIR' in os.environ and os.environ['SCRIPTSDIR'] or '.'
+        qtool.add(key, dictRequest,"%s/create_and_store_pub_module_export.zctl" % script_location)
 
     # Set default roles for these permissions
     security.setPermissionDefault('Edit Rhaptos Object', ('Manager', 'Owner','Maintainer'))
