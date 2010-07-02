@@ -691,12 +691,18 @@ class ModuleView(SimpleItem):
     
     security.declarePublic('enqueue')    
     def enqueue(self):
+        """Add module to queue tool to recreate module export zip, 
+           epub and offline HTML
+           
+           returns string message
+        """
         qtool = getToolByName(self, 'queue_tool')
         key = "modexport_%s" % self.objectId
         dictRequest = { "id":self.objectId,
                         "version":self.version }
         script_location = 'SCRIPTSDIR' in os.environ and os.environ['SCRIPTSDIR'] or '.'
         qtool.add(key, dictRequest,"%s/create_and_store_pub_module_export.zctl" % script_location)
+        return "modexport enqueued"
 
     # Set default roles for these permissions
     security.setPermissionDefault('Edit Rhaptos Object', ('Manager', 'Owner','Maintainer'))
