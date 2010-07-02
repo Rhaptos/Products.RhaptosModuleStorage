@@ -680,15 +680,6 @@ class ModuleVersionStub(SimpleItem, PropertyManager):
             return self._GoogleAnalyticsTrackingCode
         else:
             return None
-    
-    security.declarePublic('enqueue')    
-    def enqueue(self):
-        qtool = getToolByName(self, 'queue_tool')
-        key = "modexport_%s" % self.id
-        dictRequest = { "id":self.id,
-                        "version":self.latest.version }
-        script_location = 'SCRIPTSDIR' in os.environ and os.environ['SCRIPTSDIR'] or '.'
-        qtool.add(key, dictRequest,"%s/create_and_store_pub_module_export.zctl" % script_location)
 
 InitializeClass(ModuleVersionStub)
 
