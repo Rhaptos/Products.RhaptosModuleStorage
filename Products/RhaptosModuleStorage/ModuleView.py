@@ -177,6 +177,48 @@ class ModuleView(SimpleItem):
         return getattr(self._data, property)
 
 
+    security.declarePublic('getMetadata')
+    def getMetadata(self):
+        """Returns a dictionary of metadata, so that children can implement IMDML"""
+        metadata = {}
+
+        repos = getToolByName(self, 'content')
+        metadata['repository'] = repos.absolute_url()
+
+        metadata['url'] = self.absolute_url()
+        metadata['objectId'] = self.objectId
+        metadata['title'] = self.Title()
+        metadata['keywords'] = self.keywords
+        metadata['subject'] = self.subject
+        metadata['abstract'] = self.abstract
+        metadata['language'] = self.language
+        metadata['license'] = self.license
+
+        metadata['version'] = self.version
+        metadata['created'] = self.created
+        metadata['revised'] = self.revised
+
+        metadata['authors'] = self.authors
+        metadata['maintainers'] = self.maintainers
+        metadata['licensors'] = self.licensors
+        # Optional roles, currently Translator, Editor
+        for role,actors in self.roles.items():
+            metadata[role] = actors
+
+        # Collection specific metadata below
+        metadata['homepage'] = None
+        metadata['institution'] = None
+        metadata['coursecode'] = None
+        metadata['instructor'] = None
+
+        parent = {}
+        pobj = self.getParent()
+        if pobj:
+            parent = pobj.getMetadata()
+        metadata['parent'] = parent
+
+        return metadata
+
     security.declarePublic('getKeywords')
     def getKeywords(self):
         """Return list of keywords"""
