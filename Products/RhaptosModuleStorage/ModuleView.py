@@ -24,7 +24,9 @@ from Products.CMFCore.utils import getToolByName
 from Products.CNXMLDocument.CNXMLFile import CNXMLFile
 from Products.CNXMLDocument import XMLService
 from Products.CNXMLDocument import CNXML_SEARCHABLE_XSL as baretext
+from Products.CNXMLDocument.newinterfaces import IMDML 
 from DBIterator import rhaptosdb_iterator
+from zope.interface import implements
 
 # for setting _p_mtime (ZODB modified time) on our transitory File objects
 # see http://archive.netbsd.se/?ml=zope-dev&a=2000-03&t=3908618
@@ -100,6 +102,8 @@ class ModuleView(SimpleItem):
 
     security = AccessControl.ClassSecurityInfo()
     
+    implements(IMDML)
+
     meta_type = 'Rhaptos Module View'
     icon = 'module_icon.gif'
     isPrincipiaFolderish = 1
