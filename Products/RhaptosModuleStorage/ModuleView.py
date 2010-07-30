@@ -634,7 +634,7 @@ class ModuleView(SimpleItem):
         else:
             portal_type = 'UnifiedFile'
 
-        content = getattr(container, name, None)
+        content = getattr(container.aq_base, name, None)
         if not content:
             getToolByName(self, 'portal_types').constructContent(portal_type, container, name, file=body)
         else:
