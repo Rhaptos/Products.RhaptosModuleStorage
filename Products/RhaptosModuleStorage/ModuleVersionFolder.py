@@ -214,7 +214,8 @@ class ModuleVersionStorage(SimpleItem):
         qtool = getToolByName(self, 'queue_tool')
         key = "modexport_%s" % object.objectId
         dictRequest = { "id":object.objectId,
-                        "version":object.version }
+                        "version":object.version,
+                        "serverURL":self.REQUEST['SERVER_URL']}
         script_location = 'SCRIPTSDIR' in os.environ and os.environ['SCRIPTSDIR'] or '.'
         qtool.add(key, dictRequest,
                   "%s/create_and_store_pub_module_export.zctl" % script_location)

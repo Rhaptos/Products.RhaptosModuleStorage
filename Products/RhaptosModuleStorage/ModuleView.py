@@ -745,7 +745,8 @@ class ModuleView(SimpleItem):
         qtool = getToolByName(self, 'queue_tool')
         key = "modexport_%s" % self.objectId
         dictRequest = { "id":self.objectId,
-                        "version":self.version }
+                        "version":self.version,
+                        "serverURL":self.REQUEST['SERVER_URL']}
         script_location = 'SCRIPTSDIR' in os.environ and os.environ['SCRIPTSDIR'] or '.'
         qtool.add(key, dictRequest,"%s/create_and_store_pub_module_export.zctl" % script_location)
         return "modexport enqueued"
