@@ -1,3 +1,4 @@
+RhaptosModuleStorage-0.48
   - Allow ModuleView as well as CNXMLFile to implement IMDML
   - epub generation
 
