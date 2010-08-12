@@ -1,3 +1,7 @@
+RhaptosModuleStorage-0.48
+  - Allow ModuleView as well as CNXMLFile to implement IMDML
+  - epub generation
+
 RhaptosModuleStorage-0.47
   - generic setup refactor. Rhaptos 2.0 release
 
