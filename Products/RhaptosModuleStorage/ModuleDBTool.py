@@ -179,11 +179,11 @@ class ModuleDBTool(UniqueObject, SimpleItem):
             if value:
                 self.sqlInsertModuleOptionalRole(moduleid=object.objectId, version=object.version,rolename=role,persons=value)
 
-        if type(object.subject) == type(''):
-            self.sqlInsertModuleTag(moduleid=object.objectId, version=object.version,tag=object.subject)
+        if type(_utf8(object.subject)) == type(''):
+            self.sqlInsertModuleTag(moduleid=object.objectId, version=object.version,tag=_utf8(object.subject))
         else:
             for subj in object.subject:
-                self.sqlInsertModuleTag(moduleid=object.objectId, version=object.version,tag=subj)
+                self.sqlInsertModuleTag(moduleid=object.objectId, version=object.version,tag=_utf8(subj))
 
         # Put fulltext index words in place
         if object.SearchableText():
@@ -192,6 +192,7 @@ class ModuleDBTool(UniqueObject, SimpleItem):
     def _getAbstractID(self, abstract):
         """Return a unique (possibly new) ID for abstract text"""
 
+        abstract = _utf8(abstract)
         result = self.sqlGetAbstractID(abstract=abstract)
         if not len(result): # If the abstract doesn't already exist, insert it
             self.sqlInsertAbstract(abstract=abstract)
@@ -200,6 +201,7 @@ class ModuleDBTool(UniqueObject, SimpleItem):
 
     def _getKeywordID(self, word):
         """Return a unique (possibly new) ID for keyword"""
+        word = _utf8(word)
         result = self.sqlGetKeywordID(word=word)
         if not len(result): # If the keyword doesn't already exist, insert it
             self.sqlInsertKeyword(word=word)
@@ -208,12 +210,22 @@ class ModuleDBTool(UniqueObject, SimpleItem):
 
     def _getFileID(self,fileob):
         """Return the fileid for a file, stored in the DB"""
-        m=md5.new(fileob.data).hexdigest()
+        # let's make sure we've got a utf-8 string
+        fdata = _utf8(fileob.data)
+        m=md5.new(fdata).hexdigest()
         res = self.sqlGetFileByMd5(md5=m)
         for r in res:
-            if r.file == fileob.data:
+            if r.file == fdata:
                 return r.fileid
-        res = self.sqlInsertFile(file = Binary(fileob.data))
+        # Fell through, must be new bytes
+        res = self.sqlInsertFile(file = Binary(fdata))
         return res[0].fileid
+
+def _utf8(thing):
+    """Takes a string or unicode, returns an encoded string (utf-8 if input is unicode)"""
+    if type(thing) == unicode:
+        return thing.encode('utf-8')
+    else:
+        return thing
 
 InitializeClass(ModuleDBTool)
