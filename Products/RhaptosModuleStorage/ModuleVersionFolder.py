@@ -15,6 +15,7 @@ import os
 import Acquisition
 import AccessControl
 from psycopg import ProgrammingError, IntegrityError
+from zope.interface import implements
 from ZODB.POSException import ConflictError
 from OFS.SimpleItem import SimpleItem
 from OFS.Traversable import Traversable
@@ -51,7 +52,7 @@ PUNCT_REGEXP = re.compile(r'([.,\'"~`@#$%^&*={}\[\]|\\:;<>/+\(\)!? 	])')
 
 class ModuleVersionStorage(SimpleItem):
 
-    __implements__ = (IVersionStorage)
+    implements(IVersionStorage)
 
     def __init__(self, id):
         self.id = id

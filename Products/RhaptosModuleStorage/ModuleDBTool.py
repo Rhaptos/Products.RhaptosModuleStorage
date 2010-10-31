@@ -14,6 +14,9 @@ import os
 import re
 import md5
 from psycopg import Binary
+
+from zope.interface import implements
+
 import zLOG
 import AccessControl
 from Products.CMFCore.utils import UniqueObject
@@ -33,7 +36,7 @@ class ModuleDBTool(UniqueObject, SimpleItem):
     """Provide access to data stored in SQL for objects stored with RhaptosModuleStorage"""
 
 
-    __implements__ = (IModuleDBTool)
+    implements(IModuleDBTool)
 
     id = 'portal_moduledb'
     meta_type = 'Module DB Tool'
