@@ -28,13 +28,13 @@ from zope.component import getAdapter
 from zope.event import notify
 from ComputedAttribute import ComputedAttribute
 from Products.CMFCore.utils import _checkPermission
-from Products.CMFCore.CMFCorePermissions import AddPortalContent
+from Products.CMFCore.permissions import AddPortalContent
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 from Products.RhaptosModuleEditor.ModuleEditor import ModuleEditor
 from Products.RhaptosRepository.VersionFolder import incrementMinor, VersionInfo
 from Products.RhaptosRepository.Repository import Repository
 from Products.RhaptosRepository.interfaces.IVersionStorage import IVersionStorage
-from Products.CMFCore.CMFCorePermissions import View, ModifyPortalContent
+from Products.CMFCore.permissions import View, ModifyPortalContent
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import PloneMessageFactory as _
 
