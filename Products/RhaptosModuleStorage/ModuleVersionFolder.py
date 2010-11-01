@@ -167,6 +167,11 @@ class ModuleVersionStorage(SimpleItem):
         # Create new metadata from template
         # FIXME: we should also change the ID in the text if appropriate
         file = object.getDefaultFile()
+        # SERIOUS VOODOO:
+        # file.setMetadata() turns file.data into a unicode string
+        # file.setTitle() turns file.data back into a regular string, since object.Title() is a regular string
+        # the below call to insertModuleVersion() blows up, if file.data is a unicode string
+        # thus, the order of the two calls below is _important_ and object.Title() better be a regular string
         file.setMetadata(object.getMetadata())
         file.setTitle(object.Title())
 
@@ -209,7 +214,8 @@ class ModuleVersionStorage(SimpleItem):
         qtool = getToolByName(self, 'queue_tool')
         key = "modexport_%s" % object.objectId
         dictRequest = { "id":object.objectId,
-                        "version":object.version }
+                        "version":object.version,
+                        "serverURL":self.REQUEST['SERVER_URL']}
         script_location = 'SCRIPTSDIR' in os.environ and os.environ['SCRIPTSDIR'] or '.'
         qtool.add(key, dictRequest,
                   "%s/create_and_store_pub_module_export.zctl" % script_location)
