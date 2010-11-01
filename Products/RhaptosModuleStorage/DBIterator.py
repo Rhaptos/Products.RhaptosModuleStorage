@@ -1,7 +1,5 @@
-from zope.interface import implements
-
 from ZPublisher.Iterators import IStreamIterator
-import psycopg
+import psycopg2.psycopg1 as psycopg
 
 
 class rhaptosdb_iterator:
@@ -10,7 +8,7 @@ class rhaptosdb_iterator:
     fixed-sized sequence of bytes. from a Rhapotos repository db.
     """
 
-    implements(IStreamIterator,)
+    __implements__ = (IStreamIterator,)
 
     def __init__(self, name, modid, version, db_connect, streamsize=1<<16):
         self.name = name
@@ -29,7 +27,7 @@ class rhaptosdb_iterator:
             raise StopIteration
         self.pos += self.streamsize
 
-        return data
+        return str(data)
 
     def __len__(self):
         cur = self.db.cursor()

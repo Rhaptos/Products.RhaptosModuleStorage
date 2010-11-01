@@ -14,8 +14,7 @@ import re
 import os
 import Acquisition
 import AccessControl
-from psycopg import ProgrammingError, IntegrityError
-from zope.interface import implements
+from psycopg2 import ProgrammingError, IntegrityError
 from ZODB.POSException import ConflictError
 from OFS.SimpleItem import SimpleItem
 from OFS.Traversable import Traversable
@@ -29,13 +28,13 @@ from zope.component import getAdapter
 from zope.event import notify
 from ComputedAttribute import ComputedAttribute
 from Products.CMFCore.utils import _checkPermission
-from Products.CMFCore.permissions import AddPortalContent
+from Products.CMFCore.CMFCorePermissions import AddPortalContent
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 from Products.RhaptosModuleEditor.ModuleEditor import ModuleEditor
 from Products.RhaptosRepository.VersionFolder import incrementMinor, VersionInfo
 from Products.RhaptosRepository.Repository import Repository
 from Products.RhaptosRepository.interfaces.IVersionStorage import IVersionStorage
-from Products.CMFCore.permissions import View, ModifyPortalContent
+from Products.CMFCore.CMFCorePermissions import View, ModifyPortalContent
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import PloneMessageFactory as _
 
@@ -52,7 +51,7 @@ PUNCT_REGEXP = re.compile(r'([.,\'"~`@#$%^&*={}\[\]|\\:;<>/+\(\)!? 	])')
 
 class ModuleVersionStorage(SimpleItem):
 
-    implements(IVersionStorage)
+    __implements__ = (IVersionStorage)
 
     def __init__(self, id):
         self.id = id
@@ -168,11 +167,6 @@ class ModuleVersionStorage(SimpleItem):
         # Create new metadata from template
         # FIXME: we should also change the ID in the text if appropriate
         file = object.getDefaultFile()
-        # SERIOUS VOODOO:
-        # file.setMetadata() turns file.data into a unicode string
-        # file.setTitle() turns file.data back into a regular string, since object.Title() is a regular string
-        # the below call to insertModuleVersion() blows up, if file.data is a unicode string
-        # thus, the order of the two calls below is _important_ and object.Title() better be a regular string
         file.setMetadata(object.getMetadata())
         file.setTitle(object.Title())
 
@@ -215,8 +209,7 @@ class ModuleVersionStorage(SimpleItem):
         qtool = getToolByName(self, 'queue_tool')
         key = "modexport_%s" % object.objectId
         dictRequest = { "id":object.objectId,
-                        "version":object.version,
-                        "serverURL":self.REQUEST['SERVER_URL']}
+                        "version":object.version }
         script_location = 'SCRIPTSDIR' in os.environ and os.environ['SCRIPTSDIR'] or '.'
         qtool.add(key, dictRequest,
                   "%s/create_and_store_pub_module_export.zctl" % script_location)

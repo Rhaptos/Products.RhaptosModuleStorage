@@ -3,8 +3,8 @@ ModuleDBTool.py
 
 Provide checkin/checkout support between ModuleDB repository and ZODB
 
-Author: Brent Hendricks
-(C) 2005 Rice University
+Authors: Brent Hendricks, Ross Reedstrom
+(C) 2005-2010 Rice University
 
 This software is subject to the provisions of the GNU Lesser General
 Public License Version 2.1 (LGPL).  See LICENSE.txt for details.
@@ -13,10 +13,7 @@ Public License Version 2.1 (LGPL).  See LICENSE.txt for details.
 import os
 import re
 import md5
-from psycopg import Binary
-
-from zope.interface import implements
-
+from psycopg2 import Binary
 import zLOG
 import AccessControl
 from Products.CMFCore.utils import UniqueObject
@@ -36,7 +33,7 @@ class ModuleDBTool(UniqueObject, SimpleItem):
     """Provide access to data stored in SQL for objects stored with RhaptosModuleStorage"""
 
 
-    implements(IModuleDBTool)
+    __implements__ = (IModuleDBTool)
 
     id = 'portal_moduledb'
     meta_type = 'Module DB Tool'
@@ -182,11 +179,11 @@ class ModuleDBTool(UniqueObject, SimpleItem):
             if value:
                 self.sqlInsertModuleOptionalRole(moduleid=object.objectId, version=object.version,rolename=role,persons=value)
 
-        if type(_utf8(object.subject)) == type(''):
-            self.sqlInsertModuleTag(moduleid=object.objectId, version=object.version,tag=_utf8(object.subject))
+        if type(object.subject) == type(''):
+            self.sqlInsertModuleTag(moduleid=object.objectId, version=object.version,tag=object.subject)
         else:
             for subj in object.subject:
-                self.sqlInsertModuleTag(moduleid=object.objectId, version=object.version,tag=_utf8(subj))
+                self.sqlInsertModuleTag(moduleid=object.objectId, version=object.version,tag=subj)
 
         # Put fulltext index words in place
         if object.SearchableText():
@@ -195,7 +192,6 @@ class ModuleDBTool(UniqueObject, SimpleItem):
     def _getAbstractID(self, abstract):
         """Return a unique (possibly new) ID for abstract text"""
 
-        abstract = _utf8(abstract)
         result = self.sqlGetAbstractID(abstract=abstract)
         if not len(result): # If the abstract doesn't already exist, insert it
             self.sqlInsertAbstract(abstract=abstract)
@@ -204,7 +200,6 @@ class ModuleDBTool(UniqueObject, SimpleItem):
 
     def _getKeywordID(self, word):
         """Return a unique (possibly new) ID for keyword"""
-        word = _utf8(word)
         result = self.sqlGetKeywordID(word=word)
         if not len(result): # If the keyword doesn't already exist, insert it
             self.sqlInsertKeyword(word=word)
@@ -213,22 +208,12 @@ class ModuleDBTool(UniqueObject, SimpleItem):
 
     def _getFileID(self,fileob):
         """Return the fileid for a file, stored in the DB"""
-        # let's make sure we've got a utf-8 string
-        fdata = _utf8(fileob.data)
-        m=md5.new(fdata).hexdigest()
+        m=md5.new(fileob.data).hexdigest()
         res = self.sqlGetFileByMd5(md5=m)
         for r in res:
-            if r.file == fdata:
+            if r.file == fileob.data:
                 return r.fileid
-        # Fell through, must be new bytes
-        res = self.sqlInsertFile(file = Binary(fdata))
+        res = self.sqlInsertFile(file = Binary(fileob.data))
         return res[0].fileid
-
-def _utf8(thing):
-    """Takes a string or unicode, returns an encoded string (utf-8 if input is unicode)"""
-    if type(thing) == unicode:
-        return thing.encode('utf-8')
-    else:
-        return thing
 
 InitializeClass(ModuleDBTool)
