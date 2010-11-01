@@ -3,12 +3,7 @@
 
 """Interface for providing checkout/checkin between MODULEDB repository and ZODB"""
 
-from Interface import Attribute
-try:
-    from Interface import Interface
-except ImportError:
-    # for Zope versions before 2.6.0
-    from Interface import Base as Interface
+from zope.interface import Attribute, Interface
 
 class portal_moduledb(Interface):
     """Encapsulate MODULEDB access"""
