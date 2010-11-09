@@ -1,4 +1,4 @@
-from zope.app.annotation.interfaces import IAnnotations
+from zope.annotation.interfaces import IAnnotations
 from zope.interface import Interface
 from zope.interface import classImplements
 from Products.CatalogMemberDataTool.PASMemberDataTool import MemberData

@@ -1,5 +1,5 @@
 from zope.interface import implements
-from zope.app.event.interfaces import IObjectEvent
+from zope.component.interfaces import IObjectEvent
 
 class IModuleRatedEvent(IObjectEvent):
     """

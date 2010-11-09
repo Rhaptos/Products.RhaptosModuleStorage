@@ -1,4 +1,4 @@
-from zope.app.annotation.attribute import AttributeAnnotations
+from zope.annotation.attribute import AttributeAnnotations
 from BTrees.OOBTree import OOBTree
 
 class Rateable(AttributeAnnotations):
