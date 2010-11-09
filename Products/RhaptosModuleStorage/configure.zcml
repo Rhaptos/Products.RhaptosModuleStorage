@@ -17,12 +17,12 @@
       />
 
   <!-- Interface marking -->
-  <content class="Products.RhaptosModuleStorage.ModuleView.ModuleView">
+  <class class="Products.RhaptosModuleStorage.ModuleView.ModuleView">
     <implements interface="Products.CNXMLDocument.newinterfaces.ICNXMLContainer" />
-  </content>
+  </class>
 
-  <content class="Products.RhaptosModuleStorage.ModuleView.ModuleView">
+  <class class="Products.RhaptosModuleStorage.ModuleView.ModuleView">
     <implements interface="Products.CNXMLDocument.newinterfaces.ICNXMLAbstract" />
-  </content>
+  </class>
 
 </configure>
