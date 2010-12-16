@@ -146,7 +146,7 @@ class ModuleDBTool(UniqueObject, SimpleItem):
 
         # Put new version of module into the DB
         parentObj = object.getParent()
-        parent = parentObj and parentObj.ident or None
+        parent = parentObj and sqlGetModule(id=parentObj.objectId,version=parentObj.version)[0].ident or None
         self.sqlInsertNewVersion(moduleid=object.objectId,
                                  portal_type=object.portal_type,
                                  version=object.version,
