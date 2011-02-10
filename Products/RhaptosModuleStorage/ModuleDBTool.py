@@ -20,6 +20,7 @@ from Products.CMFCore.utils import UniqueObject
 from Products.CMFCore.utils import getToolByName
 from OFS.SimpleItem import SimpleItem
 from Globals import InitializeClass
+from zope.interface import implements
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 from Products.CMFCore.permissions import View, ManagePortal
 
@@ -33,7 +34,7 @@ class ModuleDBTool(UniqueObject, SimpleItem):
     """Provide access to data stored in SQL for objects stored with RhaptosModuleStorage"""
 
 
-    __implements__ = (IModuleDBTool)
+    implements = IModuleDBTool
 
     id = 'portal_moduledb'
     meta_type = 'Module DB Tool'

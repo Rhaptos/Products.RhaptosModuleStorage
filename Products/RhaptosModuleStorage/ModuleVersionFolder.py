@@ -26,6 +26,7 @@ from Globals import package_home
 from DateTime import DateTime
 from zope.component import getAdapter
 from zope.event import notify
+from zope.interface import implements
 from ComputedAttribute import ComputedAttribute
 from Products.CMFCore.utils import _checkPermission
 from Products.CMFCore.permissions import AddPortalContent
@@ -51,7 +52,7 @@ PUNCT_REGEXP = re.compile(r'([.,\'"~`@#$%^&*={}\[\]|\\:;<>/+\(\)!? 	])')
 
 class ModuleVersionStorage(SimpleItem):
 
-    __implements__ = (IVersionStorage)
+    implements(IVersionStorage)
 
     def __init__(self, id):
         self.id = id
