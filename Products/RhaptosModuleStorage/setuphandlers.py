@@ -158,12 +158,13 @@ def setupModuleStorage(context):
     if not dbtool or not dbtool.db:
         # lack of dbtool with DA string indicates we need to create DB and DA
         logger.info("...setting up DB connection")
-        setupDBConnection(portal, portal)
+        need_schema = setupDBConnection(portal, portal)
         d = portal._dbopts
 
         dbtool.setDB(d['dbname']+'DA')
 
-        logger.info(installdb(portal))
+        if need_schema:
+             logger.info(installdb(portal))
     else:
         # we have a DA string, so do any upgrades necessary to the schema
         # FIXME: store a version of the schema somewhere so we can do upgrade work here
@@ -199,6 +200,7 @@ def setupModuleStorage(context):
 def setupDBConnection(self, portal):
     """Set up the database"""
     out = StringIO()
+    need_schema = 1
     
     # Create the Database Connection
     if not hasattr(portal.aq_base,'_dbopts'):
@@ -243,7 +245,13 @@ def setupDBConnection(self, portal):
     c = con.cursor()
     c.execute("SELECT 1 FROM pg_class WHERE relname='modules'")
     if c.rowcount:
-        raise ValueError, "Database populated, not using to avoid dataloss"
+	c.execute("SELECT count(*) from modules")
+	if c.rowcount:
+            res = c.fetchone()
+            if res[0]:
+                 raise ValueError, "Database populated, not using to avoid data loss"
+            else:
+                 need_schema = 0
 
     c.execute("SELECT 1 FROM pg_language WHERE lanname='plpgsql'")
     if not c.rowcount:
@@ -258,6 +266,7 @@ def setupDBConnection(self, portal):
     # Finally ready to create the Database Adapter
     portal.manage_addProduct['ZPsycopgDA'].manage_addZPsycopgConnection(id=d['dbname']+'DA',title='Rhaptos Repository DA',encoding='utf-8',connection_string=_dsn(d), zdatetime=True)
     out.write('Install Database Adapter in %s for database %s\n' %(portal.Title(), d['dbname']))
+    return need_schema
         
 
 def installdb(self):
