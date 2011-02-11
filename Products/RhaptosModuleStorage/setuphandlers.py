@@ -211,7 +211,7 @@ def setupDBConnection(self, portal):
             # This an old ZMI which makes upgrading difficult. Attempt to
             # extract authentication credentials from Z Psycopg connection.
             if 'devrep' not in portal.aq_parent.objectIds():
-                raise "No Z Psycoppg Database Connection found"
+                raise RuntimeError("No Z Psycoppg Database Connection found")
             db = portal.aq_parent.devrep
             # Attempt to parse the connection string. Abort on any error
             # by letting the exception propagate.
