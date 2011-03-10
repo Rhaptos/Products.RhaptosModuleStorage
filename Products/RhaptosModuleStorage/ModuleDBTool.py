@@ -27,6 +27,10 @@ from Products.CMFCore.permissions import View, ManagePortal
 from interfaces.portal_moduledb import portal_moduledb as IModuleDBTool
 from ZSQLFile import ZSQLFile
 
+
+PERSON_FIELDS = ['honorific','firstname','othername','surname','fullname',
+                 'lineage','email','homepage','comment']
+
 class CommitError(StandardError):
     """An error occurred while attempting to commit a version store"""
 
@@ -175,11 +179,30 @@ class ModuleDBTool(UniqueObject, SimpleItem):
             keywordId = self._getKeywordID(word)
             self.sqlInsertModuleKeyword(moduleid=object.objectId, version=object.version, keywordid=keywordId)
 
+        # Get all the people
+        people = []
+        people.extend(object.authors)
+        people.extend(object.maintainers)
+        people.extend(object.licensors)
+
         #Insert optional roles, if any
         for role in object.optional_roles.keys():
             value = getattr(object,role.lower()+'s',None)
             if value:
                 self.sqlInsertModuleOptionalRole(moduleid=object.objectId, version=object.version,rolename=role,persons=value)
+                people.extend(value)
+
+        #Insert or update all the people, once each
+        for person in set(people):
+            member = self.portal_membership.getMemberById(person)
+            db_args = dict([(f, member.getProperty(f)) for  f in PERSON_FIELDS])
+            db_member = self.sqlGetPerson(id=person)
+            if not db_member:
+                self.sqlInsertMember(id=person, **db_args)
+            else:
+                db_args = dict([(f,v) for (f,v) in db_args.items() if v != db_member[0][f]])
+                self.sqlUpdateMember(id=person, **db_args)
+
 
         if type(_utf8(object.subject)) == type(''):
             self.sqlInsertModuleTag(moduleid=object.objectId, version=object.version,tag=_utf8(object.subject))
