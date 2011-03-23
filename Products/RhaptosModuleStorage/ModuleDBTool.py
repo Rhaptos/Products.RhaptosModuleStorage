@@ -201,7 +201,8 @@ class ModuleDBTool(UniqueObject, SimpleItem):
                 self.sqlInsertMember(id=person, **db_args)
             else:
                 db_args = dict([(f,v) for (f,v) in db_args.items() if v != db_member[0][f]])
-                self.sqlUpdateMember(id=person, **db_args)
+                if db_args:
+                    self.sqlUpdateMember(id=person, **db_args)
 
 
         if type(_utf8(object.subject)) == type(''):
