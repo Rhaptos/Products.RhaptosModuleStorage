@@ -451,6 +451,7 @@ class ModuleView(SimpleItem):
         if self.REQUEST.REQUEST_METHOD == 'HEAD': return 
         return self.normalize()
 
+
     security.declarePrivate('default')
     def default(self):
         """Make render() the default method for viewing ZRhaptosModules"""
