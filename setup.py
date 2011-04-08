@@ -27,6 +27,7 @@ setup(name='Products.RhaptosModuleStorage',
       zip_safe=False,
       install_requires=[
           'setuptools',
+          'Products.ExtZSQL',
       ],
       tests_require = [
            'zope.testing>=3.5',
