@@ -27,6 +27,7 @@ setup(name='Products.RhaptosModuleStorage',
       zip_safe=False,
       install_requires=[
           'setuptools',
+          'psycopg2',
           'Products.ExtZSQL',
       ],
       tests_require = [
