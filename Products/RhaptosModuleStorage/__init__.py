@@ -9,7 +9,7 @@ Public License Version 2.1 (LGPL).  See LICENSE.txt for details.
 """
 import sys
 from Products.CMFCore import utils
-import ModuleDBTool
+from Products.RhaptosModuleStorage.ModuleDBTool import ModuleDBTool
 
 #fixup psycopg2 datetime types
 import psycopg2
@@ -19,12 +19,12 @@ psycopg2.extensions.register_type(psycopg2._psycopg.MXINTERVAL)
 psycopg2.extensions.register_type(psycopg2._psycopg.MXDATE)
 psycopg2.extensions.register_type(psycopg2._psycopg.MXTIME)
 
-this_module = sys.modules[ __name__ ]
+this_module = sys.modules[__name__]
 product_globals = globals()
-tools = ( ModuleDBTool.ModuleDBTool,)
+tools = (ModuleDBTool,)
 
 def initialize(context):
     utils.ToolInit('Module DB Tool',
                     tools = tools,
                     icon='tool.gif' 
-                    ).initialize( context )
+                    ).initialize(context)
