@@ -29,6 +29,10 @@ setup(name='Products.RhaptosModuleStorage',
           'setuptools',
           'psycopg2',
           'Products.ExtZSQL',
+          # XXX Products.RhaptosModuleStorage.interfaces.rating requires
+          #: The following dependency can be removed after we factor the rating
+          #  adapter out of this product.
+          'Products.CatalogMemberDataTool',
       ],
       tests_require = [
            'zope.testing>=3.5',
