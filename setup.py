@@ -31,6 +31,7 @@ setup(name='Products.RhaptosModuleStorage',
           'Products.ExtZSQL',
           # XXX Products.RhaptosModuleStorage.ModuleView requires
           'Products.CNXMLDocument',
+          'Products.CNXMLTransforms',
           # XXX Products.RhaptosModuleStorage.setuphandlers requires
           'Products.RhaptosModuleEditor',
           # XXX Products.RhaptosModuleStorage.interfaces.rating requires
