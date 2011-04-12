@@ -1,6 +1,8 @@
 <?xml version="1.0"?>
 <tool-setup>
-  <required tool_id="portal_moduledb"
-      class="Products.RhaptosModuleStorage.ModuleDBTool.ModuleDBTool"/>
+  <!-- Products.RhaptosModuleStorage.ModuleDBTool.ModuleDBTool is imported in this package's __init__, therefore the absolute import path is not required. -->
+  <required
+     tool_id="portal_moduledb"
+     class="Products.RhaptosModuleStorage.ModuleDBTool"
+     />
 </tool-setup>
-
