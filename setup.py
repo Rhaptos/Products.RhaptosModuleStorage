@@ -31,6 +31,8 @@ setup(name='Products.RhaptosModuleStorage',
           'Products.ExtZSQL',
           # XXX Products.RhaptosModuleStorage.ModuleView requires
           'Products.CNXMLDocument',
+          # XXX Products.RhaptosModuleStorage.setuphandlers requires
+          'Products.RhaptosModuleEditor',
           # XXX Products.RhaptosModuleStorage.interfaces.rating requires
           #: The following dependency can be removed after we factor the rating
           #  adapter out of this product.
