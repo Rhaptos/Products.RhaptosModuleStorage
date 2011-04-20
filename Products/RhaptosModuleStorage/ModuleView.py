@@ -27,6 +27,7 @@ from Products.CNXMLDocument import CNXML_SEARCHABLE_XSL as baretext
 from Products.CNXMLDocument.newinterfaces import IMDML 
 from DBIterator import rhaptosdb_iterator
 from zope.interface import implements
+# from Products.CacheSetup.cmf_utils import _checkConditionalGET, _setCacheHeaders
 
 # for setting _p_mtime (ZODB modified time) on our transitory File objects
 # see http://archive.netbsd.se/?ml=zope-dev&a=2000-03&t=3908618
@@ -368,6 +369,7 @@ class ModuleView(SimpleItem):
                 response.setHeader('Content-Type', content_type)
             if not response.headers.has_key('last-modified'):
                 self._setLastModHeader()
+            self.REQUEST.RESPONSE.setHeader('Cache-Control', 'max-age=0, s-maxage=31536000, public, must-revalidate')
         except AttributeError:
                 pass
         return mf
@@ -458,6 +460,7 @@ class ModuleView(SimpleItem):
         if request_format == 'pdf' or request_format == 'epub':
             self._setLastModHeader()
             if REQUEST.REQUEST_METHOD == 'HEAD':
+                REQUEST.RESPONSE.setHeader('Cache-Control', 'max-age=0, s-maxage=31536000, public, must-revalidate')
                 return  # HEAD short-circuiting
 
             if self.id == 'latest':  # Redirect to specific version: 302 since it'll change w/ each publish
@@ -468,17 +471,34 @@ class ModuleView(SimpleItem):
 
             if self.testIfModSince():
                 #True is 'not modified'; status code 304 is also 'not modified'
+                REQUEST.RESPONSE.setHeader('Cache-Control', 'max-age=0, s-maxage=31536000, public, must-revalidate')
                 REQUEST.RESPONSE.setStatus(304)
                 return
 
             if request_format == 'pdf':
-                return self.downloadPDF()
+                file = self.downloadPDF()
             else:
-                return self.downloadEPUB()
+                file = self.downloadEPUB()
+            if file:
+                REQUEST.RESPONSE.setHeader('Cache-Control', 'max-age=0, s-maxage=31536000, public, must-revalidate')
+            return file
         elif request_format == 'offline':
             return self.downloadOfflineZip()
         else:
-            return self.module_render()
+            resp = self.module_render()
+            
+#            if REQUEST.RESPONSE.getStatus() in (301, 302):
+#                return resp
+#            pcs = self.portal_cache_settings
+#            view = 'module_render'
+#            member = pcs.getMember()
+#            rule, header_set = pcs.getRuleAndHeaderSet(REQUEST, self, view, member)
+#            if header_set is not None:
+#                expr_context = rule._getExpressionContext(REQUEST, self, view, member, keywords={})
+#            else:
+#                expr_context = None
+#            _setCacheHeaders(self, {}, rule, header_set, expr_context) 
+            return resp
 
     security.declarePrivate('testIfModSince')
     def testIfModSince(self):
