@@ -152,6 +152,7 @@ class ModuleDBTool(UniqueObject, SimpleItem):
                                  version=object.version,
                                  name=object.title,
                                  created=object.created.HTML4(),
+                                 revised=object.revised.HTML4(),
                                  authors=object.authors,
                                  maintainers=object.maintainers,
                                  licensors=object.licensors,
