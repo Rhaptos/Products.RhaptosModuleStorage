@@ -47,7 +47,7 @@ from event import ModuleRatedEvent
 from interfaces.rating import IRateable
 from config import RATE_MODULE_PERMISSION
 
-PUNCT_REGEXP = re.compile(r'([.,\'"~`@#$%^&*={}\[\]|\\:;<>/+\(\)!? 	])')
+PUNCT_REGEXP = re.compile(r'([.,\'"~`@#$%^&*={}\[\]|\\:;<>/+\(\)!?         ])')
 
 class ModuleVersionStorage(SimpleItem):
 
@@ -290,6 +290,12 @@ class ModuleVersionStorage(SimpleItem):
         the given portal_types
         """
 
+        if type(portal_types) == type(''):
+            portal_types = [portal_types]
+
+        if not portal_types:
+            portal_types = ['Module']
+
         count = self.portal_moduledb.sqlCountModules(portal_types=portal_types)[0].count
         
         return count
@@ -304,6 +310,9 @@ class ModuleVersionStorage(SimpleItem):
 
         if type(portal_types) == type(''):
             portal_types = [portal_types]
+
+        if not portal_types:
+            portal_types = ['Module']
 
         langs = list(self.portal_moduledb.sqlGetLanguageCounts(portal_types=portal_types).tuples())
         langs.sort(lambda x,y: cmp(y[1],x[1]))
@@ -346,14 +355,17 @@ class ModuleVersionStorage(SimpleItem):
                     'abstract':1,
                     'keyword':10,
                     'author':50, 
-					'translator':40,
+                    'translator':40,
                     'editor':20,
-					'maintainer':10,
-					'licensor':10,
+                    'maintainer':10,
+                    'licensor':10,
                     'institution':10, 
                     'exact_title':100,
                     'title':10,
-					'parentAuthor':0,
+                    'parentAuthor':0,
+                    'containedAuthor':0,
+                    'language':5,
+                    'subject':10,
                     'containedIn':200,
                     'objectid':1000}
         if not weights:
@@ -362,6 +374,12 @@ class ModuleVersionStorage(SimpleItem):
             for w in self.default_search_weights.keys():
                weights.setdefault(w,0)
         
+        if type(portal_types) == type(''):
+            portal_types = [portal_types]
+
+        if not portal_types:
+            portal_types = ['Module']
+
         dbquery,uncook = self.cookSearchTerms(query)
         results = []
         if dbquery:
@@ -369,7 +387,7 @@ class ModuleVersionStorage(SimpleItem):
             results.extend(self.portal_moduledb.sqlSearchModules(query=dbquery,weights=weights,required=restrict,min_rating=min_rating))
 
         newmatched={}
-	newfields={}
+        newfields={}
         for r in results:
             for m,v in r.matched.items(): 
                 for u in uncook[m]:
@@ -379,12 +397,12 @@ class ModuleVersionStorage(SimpleItem):
             newmatched.clear()
 
             for m,v in r.fields.items(): 
-		newfields[m]=reduce(lambda x,y:x+y,[uncook[t] for t in v],[])
+                newfields[m]=reduce(lambda x,y:x+y,[uncook[t] for t in v],[])
             r.fields.clear()
             r.fields.update(newfields)
             newfields.clear()
 
-        return results
+        return [r for r in results if r.portal_type in portal_types]
 
     def searchDateRange(self, start, end):
         """
@@ -415,7 +433,7 @@ class ModuleVersionStorage(SimpleItem):
                 term = ''
             reverse.setdefault(term,[]).append(t)
 
-	# unique the terms, in case any collided
+        # unique the terms, in case any collided
         query = filter(None,reverse)
 
         return query, reverse
