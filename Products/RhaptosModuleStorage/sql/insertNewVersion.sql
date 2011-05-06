@@ -3,7 +3,7 @@ arguments: moduleid:string portal_type:string version:string name:string created
 </dtml-comment>
 
 INSERT INTO modules
-  (moduleid, portal_type, version, name, created, authors, maintainers, licensors, <dtml-if parentauthors>parentauthors,</dtml-if> abstractid, stateid, licenseid, doctype, submitter, submitlog, language, parent)
+  (moduleid, portal_type, version, name, created, revised, authors, maintainers, licensors, <dtml-if parentauthors>parentauthors,</dtml-if> abstractid, stateid, licenseid, doctype, submitter, submitlog, language, parent)
 VALUES 
 (
  <dtml-sqlvar moduleid type="string">, 
