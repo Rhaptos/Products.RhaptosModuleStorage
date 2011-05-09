@@ -388,3 +388,11 @@ def addMimetypes(self):
     for mf in mfs[1]:
         fname = mf[0]
         d.query("update module_files set mimetype = %s where filename = %s ", query_data=(str(lext(fname)),fname))
+
+
+def addPortalTypeIdx(self):
+    rep = getToolByName(self, 'portal_moduledb')
+    db=getattr(self,rep.db)
+
+    db.manage_test(query="""CREATE INDEX latest_modules_portal_type_idx on latest_modules (portal_type);""")
+    db.manage_test(query="""CREATE INDEX modules_portal_type_idx on modules (portal_type);""")

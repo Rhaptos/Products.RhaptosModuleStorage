@@ -94,6 +94,7 @@ CREATE TABLE "modules" (
 CREATE INDEX modules_moduleid_idx on modules (moduleid);
 CREATE INDEX modules_upmodid_idx ON modules  (upper(moduleid));
 CREATE INDEX modules_upname_idx ON modules  (upper(name));
+CREATE INDEX modules_portal_type_idx on modules (portal_type);
 
 -- the following needs to be an identical copy of modules as latest_modules
 
@@ -123,6 +124,7 @@ CREATE INDEX latest_modules_upmodid_idx ON latest_modules  (upper(moduleid));
 CREATE INDEX latest_modules_upname_idx ON latest_modules  (upper(name));
 CREATE INDEX latest_modules_moduleid_idx on latest_modules (moduleid);
 CREATE INDEX latest_modules_module_ident_idx on latest_modules (module_ident);
+CREATE INDEX latest_modules_portal_type_idx on latest_modules (portal_type);
 
 CREATE OR REPLACE FUNCTION update_latest() RETURNS trigger AS '
 BEGIN

@@ -1,3 +1,7 @@
+RhaptosModuleStorage-0.52
+  - return Modules only by default for various searches
+  - correctly store revised dates from object
+
 RhaptosModuleStorage-0.51.1
   - declare dependency on CacheSetup
 
