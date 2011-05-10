@@ -47,7 +47,7 @@ from event import ModuleRatedEvent
 from interfaces.rating import IRateable
 from config import RATE_MODULE_PERMISSION
 
-PUNCT_REGEXP = re.compile(r'([.,\'"~`@#$%^&*={}\[\]|\\:;<>/+\(\)!?         ])')
+PUNCT_REGEXP = re.compile(r'([.,\'"~`@#$%^&*={}\[\]|\\:;<>/+\(\)!?  ])')
 
 class ModuleVersionStorage(SimpleItem):
 
