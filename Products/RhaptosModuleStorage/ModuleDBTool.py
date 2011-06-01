@@ -84,6 +84,7 @@ class ModuleDBTool(UniqueObject, SimpleItem):
 
     # Member-data functions
     sqlGetAuthorByFirstChar = ZSQLFile('sql/getAuthorByFirstChar', globals(), __name__='sqlGetAuthorByFirstChar')
+    sqlGetAuthorById = ZSQLFile('sql/getAuthorById', globals(), __name__='sqlGetAuthorById')
     sqlInsertMember = ZSQLFile('sql/insertMemberData', globals(), __name__='sqlInsertMember')
     sqlUpdateMember = ZSQLFile('sql/updateMemberData', globals(), __name__='sqlUpdateMember')
 
