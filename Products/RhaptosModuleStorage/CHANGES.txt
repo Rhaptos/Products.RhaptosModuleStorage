@@ -1,3 +1,6 @@
+RhaptosModuleStorage-0.53
+  - iterator for db files duplicating one byte at 64K
+
 RhaptosModuleStorage-0.52
   - return Modules only by default for various searches
   - correctly store revised dates from object
