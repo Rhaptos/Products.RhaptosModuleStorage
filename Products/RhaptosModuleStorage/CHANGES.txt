@@ -1,3 +1,7 @@
+RhaptosModuleStorage-0.54
+  - implement trustedzip import
+  - handle authors without a member account
+
 RhaptosModuleStorage-0.53
   - iterator for db files duplicating one byte at 64K
 
