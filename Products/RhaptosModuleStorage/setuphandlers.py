@@ -153,7 +153,11 @@ def setupModuleStorage(context):
         return
     portal = context.getSite()
     
-    
+    # We require CacheSetup
+    qi = getToolByName(portal, 'portal_quickinstaller')
+    if not qi.isProductInstalled('CacheSetup'):
+        qi.installProduct('CacheSetup')
+
     dbtool = getToolByName(portal, 'portal_moduledb', None)
     if not dbtool or not dbtool.db:
         # lack of dbtool with DA string indicates we need to create DB and DA
