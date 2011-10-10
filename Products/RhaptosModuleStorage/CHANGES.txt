@@ -1,3 +1,6 @@
+RhaptosModuleStorage-0.55
+  - sword-service release
+
 RhaptosModuleStorage-0.54
   - implement trustedzip import
   - handle authors without a member account
