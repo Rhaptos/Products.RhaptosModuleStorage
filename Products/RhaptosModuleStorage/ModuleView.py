@@ -24,7 +24,10 @@ from Products.CMFCore.utils import getToolByName
 from Products.CNXMLDocument.CNXMLFile import CNXMLFile
 from Products.CNXMLDocument import XMLService
 from Products.CNXMLDocument import CNXML_SEARCHABLE_XSL as baretext
+from Products.CNXMLDocument.newinterfaces import IMDML 
 from DBIterator import rhaptosdb_iterator
+from zope.interface import implements
+from Products.CacheSetup.cmf_utils import _checkConditionalGET, _setCacheHeaders
 
 # for setting _p_mtime (ZODB modified time) on our transitory File objects
 # see http://archive.netbsd.se/?ml=zope-dev&a=2000-03&t=3908618
@@ -100,6 +103,8 @@ class ModuleView(SimpleItem):
 
     security = AccessControl.ClassSecurityInfo()
     
+    implements(IMDML)
+
     meta_type = 'Rhaptos Module View'
     icon = 'module_icon.gif'
     isPrincipiaFolderish = 1
@@ -176,6 +181,48 @@ class ModuleView(SimpleItem):
                 raise IndexError, "Couldn't find version %s of object %s" % (self.id, self.objectId)
         return getattr(self._data, property)
 
+
+    security.declarePublic('getMetadata')
+    def getMetadata(self):
+        """Returns a dictionary of metadata, so that children can implement IMDML"""
+        metadata = {}
+
+        repos = getToolByName(self, 'content')
+        metadata['repository'] = repos.absolute_url()
+
+        metadata['url'] = self.absolute_url()
+        metadata['objectId'] = self.objectId
+        metadata['title'] = self.Title()
+        metadata['keywords'] = self.keywords
+        metadata['subject'] = self.subject
+        metadata['abstract'] = self.abstract
+        metadata['language'] = self.language
+        metadata['license'] = self.license
+
+        metadata['version'] = self.version
+        metadata['created'] = self.created
+        metadata['revised'] = self.revised
+
+        metadata['authors'] = self.authors
+        metadata['maintainers'] = self.maintainers
+        metadata['licensors'] = self.licensors
+        # Optional roles, currently Translator, Editor
+        for role,actors in self.roles.items():
+            metadata[role] = actors
+
+        # Collection specific metadata below
+        metadata['homepage'] = None
+        metadata['institution'] = None
+        metadata['coursecode'] = None
+        metadata['instructor'] = None
+
+        parent = {}
+        pobj = self.getParent()
+        if pobj:
+            parent = pobj.getMetadata()
+        metadata['parent'] = parent
+
+        return metadata
 
     security.declarePublic('getKeywords')
     def getKeywords(self):
@@ -322,6 +369,7 @@ class ModuleView(SimpleItem):
                 response.setHeader('Content-Type', content_type)
             if not response.headers.has_key('last-modified'):
                 self._setLastModHeader()
+            self.REQUEST.RESPONSE.setHeader('Cache-Control', 'max-age=0, s-maxage=31536000, public, must-revalidate')
         except AttributeError:
                 pass
         return mf
@@ -408,22 +456,50 @@ class ModuleView(SimpleItem):
     def default(self):
         """Make render() the default method for viewing ZRhaptosModules"""
         REQUEST = self.REQUEST
-        if REQUEST.get('format','') == 'pdf':
+        request_format = REQUEST.get('format','')
+        if request_format == 'pdf' or request_format == 'epub':
             self._setLastModHeader()
             if REQUEST.REQUEST_METHOD == 'HEAD':
+                REQUEST.RESPONSE.setHeader('Cache-Control', 'max-age=0, s-maxage=31536000, public, must-revalidate')
                 return  # HEAD short-circuiting
-            elif self.id == 'latest':  # Redirect to specific version: 302 since it'll change w/ each publish
+
+            if self.id == 'latest':  # Redirect to specific version: 302 since it'll change w/ each publish
                 path = self.REQUEST.URL2 + '/' + self.version 
                 path = path + '/?' + self.REQUEST.QUERY_STRING
                 self.REQUEST.RESPONSE.redirect(path, status=302)
                 return
+
             if self.testIfModSince():
-                #True is 'not modified'
+                #True is 'not modified'; status code 304 is also 'not modified'
+                REQUEST.RESPONSE.setHeader('Cache-Control', 'max-age=0, s-maxage=31536000, public, must-revalidate')
                 REQUEST.RESPONSE.setStatus(304)
                 return
-            return self.downloadPDF()
+
+            if request_format == 'pdf':
+                file = self.downloadPDF()
+            else:
+                file = self.downloadEPUB()
+            if file:
+        	REQUEST.RESPONSE.setHeader('Cache-Control', 'max-age=0, s-maxage=31536000, public, must-revalidate')
+	    return file
+        elif request_format == 'offline':
+            return self.downloadOfflineZip()
         else:
-            return self.module_render()
+    	    resp = self.module_render()
+    	    
+    	    if REQUEST.RESPONSE.getStatus() in (301, 302):
+    		return resp
+    		
+    	    pcs = self.portal_cache_settings
+    	    view = 'module_render'
+    	    member = pcs.getMember()
+    	    rule, header_set = pcs.getRuleAndHeaderSet(REQUEST, self, view, member)
+    	    if header_set is not None:
+    	        expr_context = rule._getExpressionContext(REQUEST, self, view, member, keywords={})
+    	    else:
+    		expr_context = None
+    	    _setCacheHeaders(self, {}, rule, header_set, expr_context)
+            return resp
 
     security.declarePrivate('testIfModSince')
     def testIfModSince(self):
@@ -452,14 +528,65 @@ class ModuleView(SimpleItem):
         """Get modules's normalized source"""
         return self.getDefaultFile().normalize()
 
+    security.declarePrivate('downloadOfflineZip')
+    def downloadOfflineZip(self):
+        """Returns a PDF version of the module
+        return the ePub file from the PrintTool storage, if possible.
+        if not possible, returns nothing.
+
+        Returns:
+            EPUB file or nothing
+        """
+        request = self.REQUEST
+        module_id = self.objectId
+        module_version = self.version
+        ptool = getToolByName(self,'rhaptos_print')
+
+        file = ptool.getFile(module_id, module_version, 'offline.zip')
+        bIsOfflineZipFileCached = ( file is not None and file.get_size() > 0 )
+        if not bIsOfflineZipFileCached:
+            file = None
+
+        if file is not None:
+            offlinezipfilename = '%s_%s_offline.zip' % (module_id,module_version)
+            request.RESPONSE.setHeader('Content-Type', 'application/zip')
+            request.RESPONSE.setHeader('Content-Disposition', 'attachment; filename=%s' % offlinezipfilename)
+
+        return file
+
+    security.declarePrivate('downloadEPUB')
+    def downloadEPUB(self):
+        """Returns a PDF version of the module
+        return the ePub file from the PrintTool storage, if possible.
+        if not possible, returns nothing.
+
+        Returns:
+            EPUB file or nothing
+        """
+        request = self.REQUEST
+        module_id = self.objectId
+        module_version = self.version
+        ptool = getToolByName(self,'rhaptos_print')
+
+        file = ptool.getFile(module_id, module_version, 'epub')
+        bIsEpubFileCached = ( file is not None and file.get_size() > 0 )
+        if not bIsEpubFileCached:
+            file = None
+
+        if file is not None:
+            epubfilename = '%s_%s.epub' % (module_id,module_version)
+            request.RESPONSE.setHeader('Content-Type', 'application/epub+zip')
+            request.RESPONSE.setHeader('Content-Disposition', 'attachment; filename=%s' % epubfilename)
+
+        return file
 
     security.declarePrivate('downloadPDF')
     def downloadPDF(self):
         """Returns a PDF version of the module
         Checks for status in RhaptosPrintTool.  If it is 'failed', method returns
         if it is succeeded, tries to get PDF from RhaptosPrintTool.
-        If is not there, the PDF is generated and added to RhaptosPrintTool
-        
+        If is not there, the PDF is generated on-demand and added to RhaptosPrintTool
+
         Returns:
             PDF file or nothing
         """
@@ -528,7 +655,7 @@ class ModuleView(SimpleItem):
         else:
             portal_type = 'UnifiedFile'
 
-        content = getattr(container, name, None)
+        content = getattr(container.aq_base, name, None)
         if not content:
             getToolByName(self, 'portal_types').constructContent(portal_type, container, name, file=body)
         else:
@@ -628,6 +755,22 @@ class ModuleView(SimpleItem):
     def getIcon(self, *args):
         """CMF Combatibility method"""
         return self.icon
+    
+    security.declarePublic('enqueue')    
+    def enqueue(self):
+        """Add module to queue tool to recreate module export zip, 
+           epub and offline HTML
+           
+           returns string message
+        """
+        qtool = getToolByName(self, 'queue_tool')
+        key = "modexport_%s" % self.objectId
+        dictRequest = { "id":self.objectId,
+                        "version":self.version,
+                        "serverURL":self.REQUEST['SERVER_URL']}
+        script_location = 'SCRIPTSDIR' in os.environ and os.environ['SCRIPTSDIR'] or '.'
+        qtool.add(key, dictRequest,"%s/create_and_store_pub_module_export.zctl" % script_location)
+        return "modexport enqueued"
 
     # Set default roles for these permissions
     security.setPermissionDefault('Edit Rhaptos Object', ('Manager', 'Owner','Maintainer'))

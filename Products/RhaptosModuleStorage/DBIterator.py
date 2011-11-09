@@ -25,7 +25,12 @@ class rhaptosdb_iterator:
             data = res['data']
         else:
             raise StopIteration
-        self.pos += self.streamsize
+
+        datalen = len(data) 
+        self.pos += datalen
+
+        if datalen < self.streamsize:
+            self.pos += 1
 
         return str(data)
 

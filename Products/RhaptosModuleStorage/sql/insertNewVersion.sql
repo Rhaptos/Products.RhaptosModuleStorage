@@ -1,9 +1,9 @@
 <dtml-comment>
-arguments: moduleid:string portal_type:string version:string name:string created:date authors maintainers licensors parentauthors abstractid:int stateid:int licenseid:int doctype:string submitter:string submitlog:string parent:int language:string
+arguments: moduleid:string portal_type:string version:string name:string created:date revised:date authors maintainers licensors parentauthors abstractid:int stateid:int licenseid:int doctype:string submitter:string submitlog:string parent:int language:string
 </dtml-comment>
 
 INSERT INTO modules
-  (moduleid, portal_type, version, name, created, authors, maintainers, licensors, <dtml-if parentauthors>parentauthors,</dtml-if> abstractid, stateid, licenseid, doctype, submitter, submitlog, language, parent)
+  (moduleid, portal_type, version, name, created, revised, authors, maintainers, licensors, <dtml-if parentauthors>parentauthors,</dtml-if> abstractid, stateid, licenseid, doctype, submitter, submitlog, language, parent)
 VALUES 
 (
  <dtml-sqlvar moduleid type="string">, 
@@ -11,6 +11,7 @@ VALUES
  <dtml-sqlvar version type="string">, 
  <dtml-sqlvar name type="string">, 
  <dtml-sqlvar created type="string">, 
+ <dtml-sqlvar revised type="string">, 
  ARRAY <dtml-var expr="_.list([p.encode('utf-8') for p in authors])">, 
  ARRAY <dtml-var expr="_.list([p.encode('utf-8') for p in maintainers])">,
  ARRAY <dtml-var expr="_.list([p.encode('utf-8') for p in licensors])">,

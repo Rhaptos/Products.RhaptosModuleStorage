@@ -1,3 +1,36 @@
+RhaptosModuleStorage-0.55
+  - sword-service release
+
+RhaptosModuleStorage-0.54
+  - implement trustedzip import
+  - handle authors without a member account
+
+RhaptosModuleStorage-0.53
+  - iterator for db files duplicating one byte at 64K
+
+RhaptosModuleStorage-0.52
+  - return Modules only by default for various searches
+  - correctly store revised dates from object
+
+RhaptosModuleStorage-0.51.1
+  - declare dependency on CacheSetup
+
+RhaptosModuleStorage-0.51
+  - caching
+
+RhaptosModuleStorage-0.50
+  - bugfix for derived-collection metadata storage
+
+RhaptosModuleStorage-0.49
+  - sword (utf-8 support)
+
+RhaptosModuleStorage-0.48
+  - Allow ModuleView as well as CNXMLFile to implement IMDML
+  - epub generation
+
+RhaptosModuleStorage-0.47
+  - generic setup refactor. Rhaptos 2.0 release
+
 RhaptosModuleStorage-0.46
   - siyavula-phase-3 (11 Jan 2010)
 
