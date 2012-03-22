@@ -10,7 +10,7 @@ max_rows: 0
 <dtml-if versionedMods>
 SELECT
   m.moduleid AS "objectId", m.portal_type, m.version, m.version as "reqVersion", m.name, m.created, m.revised, 
-  abstract, m.stateid, m.doctype,l.url AS license, m.module_ident AS ident, m.submitter, 
+  abstract, m.stateid, m.doctype,l.url AS license, m.module_ident AS ident, m.submitter, m.submitlog,
   p.moduleid AS parent_id, p.version AS parent_version,
   m.authors as _authors, m.licensors as _licensors, m.maintainers as _maintainers, m.parentauthors as _parentauthors, m.language as language
 FROM modules m
