@@ -402,13 +402,20 @@ class ModuleVersionStorage(SimpleItem):
 
         return [r for r in results if r.portal_type in portal_types]
 
-    def searchDateRange(self, start, end):
+    def searchDateRange(self, start, end, portal_types=None):
         """
         Search for objects whose latest version is within the specified date range
 
         start and end must be DateTime objects
         """
-        return self.portal_moduledb.sqlSearchModulesByDate(start=start,end=end)
+        if type(portal_types) == type(''):
+            portal_types = [portal_types]
+
+        if not portal_types:
+            portal_types = ['Module']
+
+        results = self.portal_moduledb.sqlSearchModulesByDate(start=start,end=end)
+        return [r for r in results if r.portal_type in portal_types]
 
     # XXX: Included for backwards compatability:
     def isLatestVersion(self, object):
