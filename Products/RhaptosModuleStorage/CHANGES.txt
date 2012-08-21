@@ -1,3 +1,9 @@
+RhaptosModuleStorage-0.57
+  - extend searchDateRange to accept portal_types filter (for OAI)
+
+RhaptosModuleStorage-0.56
+  - sword bugfix release
+
 RhaptosModuleStorage-0.55
   - sword-service release
 

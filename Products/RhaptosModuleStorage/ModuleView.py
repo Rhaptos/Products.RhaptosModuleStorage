@@ -110,7 +110,9 @@ class ModuleView(SimpleItem):
     isPrincipiaFolderish = 1
     state = 'public'
     actor = None
-    getPendingCollaborations = None
+
+    def getPendingCollaborations(self):
+        return {}
 
     def __init__(self, id, objectId, data=None, **kwargs):
         # Since this is a versioned object, the id is the version
@@ -331,6 +333,9 @@ class ModuleView(SimpleItem):
 
     security.declarePublic('submitter')
     submitter = ComputedAttribute(lambda self: self._getDBProperty('submitter'), 1)
+
+    security.declarePublic('message')
+    message = ComputedAttribute(lambda self: self._getDBProperty('submitlog'), 1)
 
     security.declarePublic('_links')
     _links = ComputedAttribute(lambda self: self.getContextLinks(), 1)
