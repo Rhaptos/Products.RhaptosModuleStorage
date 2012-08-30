@@ -131,3 +131,16 @@ class DBModuleOAI:
         else:
             return {}
 
+class DBModuleHistory:
+
+    icon = 'module_icon.gif'
+
+    # Compatibility with CMF objects
+    getIcon = icon
+    meta_type = 'Rhaptos Module Version'
+
+
+    def __init__(self):
+        
+        # Convert timestamps
+            self.revised = DateTime(self.revised.strftime('%Y-%m-%d %H:%M:%S %z'))

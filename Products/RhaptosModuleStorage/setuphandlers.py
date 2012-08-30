@@ -260,7 +260,7 @@ def setupDBConnection(self, portal):
         out.write('Install tsearch in database %s from %s\n' %(d['dbname'], ts_location))
 
     # Finally ready to create the Database Adapter
-    portal.manage_addProduct['ZPsycopgDA'].manage_addZPsycopgConnection(id=d['dbname']+'DA',title='Rhaptos Repository DA',encoding='utf-8',connection_string=_dsn(d), zdatetime=True)
+    portal.manage_addProduct['ZPsycopgDA'].manage_addZPsycopgConnection(id=d['dbname']+'DA',title='Rhaptos Repository DA',encoding='utf-8',connection_string=_dsn(d), zdatetime=False)
     out.write('Install Database Adapter in %s for database %s\n' %(portal.Title(), d['dbname']))
         
 
