@@ -143,4 +143,4 @@ class DBModuleHistory:
     def __init__(self):
         
         # Convert timestamps
-            self.revised = DateTime(self._revised.strftime('%Y-%m-%d %H:%M:%S %z'))
+            self.revised = DateTime(self.revised.strftime('%Y-%m-%d %H:%M:%S %z'))
