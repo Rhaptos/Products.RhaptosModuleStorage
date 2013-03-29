@@ -61,7 +61,7 @@ class ModuleVersionStorage(SimpleItem):
     def hasObject(self, id):
         """Return True if an object with the specified id is located in this storage"""
         return bool(self.portal_moduledb.sqlModuleExists(id=id))
-    
+
     def createVersionFolder(self, object):
         """Create a new version folder instance inside the repository"""
         if not self.isUnderVersionControl(object):
@@ -112,7 +112,7 @@ class ModuleVersionStorage(SimpleItem):
     def isResourceUpToDate(self, object):
         """
         Return True if the object is the most recently checked in version
-        """    
+        """
         version = object.version
         try:
             latest = object.aq_parent.latest
@@ -134,7 +134,7 @@ class ModuleVersionStorage(SimpleItem):
         """
 
         objectId = object.objectId
-        
+
         # The module if new if it has no history
         new = not self.getHistory(objectId)
         vf = self.getVersionFolder(objectId)
@@ -147,7 +147,7 @@ class ModuleVersionStorage(SimpleItem):
             if (object.version != vf.latest.version):
                 raise CommitError, "Version mismatch: version %s checked out, but latest is %s" % (object.version, vf.latest.version)
             version = incrementMinor(object.version)
-            
+
             # We don't actually create a persistent object, but the user should have the permission
             # to do so (unless this is a new module...)
             if not _checkPermission(AddPortalContent, vf):
@@ -180,8 +180,8 @@ class ModuleVersionStorage(SimpleItem):
         for link in object.getLinks():
             self.portal_linkmap.addLink(source, link.target, link.title, link.category, link.strength)
 
-# Put it in the catalog 
-#   Uses a sentinel so certain methods that access the catalog (Title) 
+# Put it in the catalog
+#   Uses a sentinel so certain methods that access the catalog (Title)
 #   can short circuit
         modview = vf.latest
         modview._cataloging = True
@@ -192,7 +192,7 @@ class ModuleVersionStorage(SimpleItem):
     def notifyObjectRevised(self, object, origobj=None):
         """One of this storage's objects was revised.
            We should trigger a more specific event.
-    
+
         """
         ### This should be registered to the event for ObjectPublication
         ### once we have access to Zope3 events.  Something like:
@@ -245,14 +245,14 @@ class ModuleVersionStorage(SimpleItem):
                 self.portal_moduledb.sqlDeleteModule(id=objectId)
             except IntegrityError, foo:
                 raise IntegrityError, "Cannot delete: object %s has other works derived from it." % objectId
-            
+
             #Delete the ZODB ModuleVersionStub
             self.aq_parent._delObject(objectId)
-        
+
         #XXX:Should this be done here, or in Repository.py?
         #Remove any links that point to the module
         #self.portal_linkmap.deleteLinks(id, version)
-    
+
     def getObject(self, id, version=None, **kw):
         """
         Return the object with the specified ID and version
@@ -270,7 +270,7 @@ class ModuleVersionStorage(SimpleItem):
         if version:
             ob = ob._getModuleVersion(version, **kw)
         return ob
-    
+
     def getObjects(self, objects):
         """
         Return sequence of objects with specified ID and versions
@@ -278,7 +278,7 @@ class ModuleVersionStorage(SimpleItem):
         objects must be a list of (id, version) tuples
         """
         return [self.getObject(obj[0],obj[1]) for obj in objects]
-        
+
     def countObjects(self, portal_types=None):
         """
         Return the number of objects in the storage.
@@ -294,11 +294,11 @@ class ModuleVersionStorage(SimpleItem):
             portal_types = ['Module']
 
         count = self.portal_moduledb.sqlCountModules(portal_types=portal_types)[0].count
-        
+
         return count
 
     def getLanguageCounts(self, portal_types=None):
-        """Returns a list of tuples of language codes and count of objects 
+        """Returns a list of tuples of language codes and count of objects
         using them, ordered by number of objects, descending
 
         If portal_types is specified, limit the results to objects of
@@ -314,7 +314,7 @@ class ModuleVersionStorage(SimpleItem):
         langs = list(self.portal_moduledb.sqlGetLanguageCounts(portal_types=portal_types).tuples())
         langs.sort(lambda x,y: cmp(y[1],x[1]))
         return langs
-        
+
     def getObjectsByRole(self, role, user_id):
         """Return a list with all objects where the user has the specified role"""
 
@@ -340,10 +340,10 @@ class ModuleVersionStorage(SimpleItem):
     def search(self, query, portal_types=None,weights={}, restrict=[], min_rating=0):
         """
         Search the storage
-        Default match weights: 
+        Default match weights:
             fulltext (fulltext) = 1
-            keyword  (keyword) = 10 
-            Author   (name/id)(author) = 10 
+            keyword  (keyword) = 10
+            Author   (name/id)(author) = 10
             title    (title) = 100
             ObjectId (objectid) = 1000
         """
@@ -352,12 +352,12 @@ class ModuleVersionStorage(SimpleItem):
                     'fulltext':1,
                     'abstract':1,
                     'keyword':10,
-                    'author':50, 
+                    'author':50,
                     'translator':40,
                     'editor':20,
                     'maintainer':10,
                     'licensor':10,
-                    'institution':10, 
+                    'institution':10,
                     'exact_title':100,
                     'title':10,
                     'parentAuthor':0,
@@ -371,7 +371,7 @@ class ModuleVersionStorage(SimpleItem):
         else:
             for w in self.default_search_weights.keys():
                weights.setdefault(w,0)
-        
+
         if type(portal_types) == type(''):
             portal_types = [portal_types]
 
@@ -387,14 +387,14 @@ class ModuleVersionStorage(SimpleItem):
         newmatched={}
         newfields={}
         for r in results:
-            for m,v in r.matched.items(): 
+            for m,v in r.matched.items():
                 for u in uncook[m]:
                     newmatched[u] = v
             r.matched.clear()
             r.matched.update(newmatched)
             newmatched.clear()
 
-            for m,v in r.fields.items(): 
+            for m,v in r.fields.items():
                 newfields[m]=reduce(lambda x,y:x+y,[uncook[t] for t in v],[])
             r.fields.clear()
             r.fields.update(newfields)
@@ -494,7 +494,7 @@ class ModuleVersionStub(SimpleItem, PropertyManager):
         if self.REQUEST.QUERY_STRING:
             path = path + '?' + self.REQUEST.QUERY_STRING
         self.REQUEST.RESPONSE.redirect(path, status=301)
-    
+
     security.declarePrivate('_log')
     def _log(self, message, severity):
         zLOG.LOG("ModuleVersionStub", severity, "%s (%s)" % (message, self.REQUEST['PATH_INFO']))
@@ -507,7 +507,7 @@ class ModuleVersionStub(SimpleItem, PropertyManager):
     def getHistoryCount(self):
         """Return the number of versions of the object"""
         return len(self.aq_parent.getHistory(self.id))
-    
+
     # FIXME: These should be in a skin
     _created = PageTemplateFile('zpt/created', globals())
     security.declareProtected('Edit Rhaptos Object', 'postUpdate')
@@ -520,7 +520,7 @@ class ModuleVersionStub(SimpleItem, PropertyManager):
             return
 
         if self.REQUEST.has_key('moduleText'):
-            content = self.REQUEST['moduleText']        
+            content = self.REQUEST['moduleText']
         elif self.REQUEST.has_key('BODY'):
             content = self.REQUEST['BODY']
         else:
@@ -554,7 +554,7 @@ class ModuleVersionStub(SimpleItem, PropertyManager):
         # Pretend like we're going to delete the temporary folder so it gets unindexed
         #tmp.manage_beforeDelete(folder, self)
         del tmp
-        
+
         # If its successful, return nothing
         self.REQUEST.RESPONSE.setStatus(201)
         url = self.latest.absolute_url()
@@ -610,7 +610,7 @@ class ModuleVersionStub(SimpleItem, PropertyManager):
             REQUEST.RESPONSE.redirect(REQUEST.HTTP_REFERER)
 
     security.declareProtected(View, 'endorsed')
-    def endorsed(self):       
+    def endorsed(self):
         return getattr(self, '_endorsed', False)
 
     security.declareProtected(View, 'canEndorse')
@@ -649,16 +649,16 @@ class ModuleVersionStub(SimpleItem, PropertyManager):
             #     REQUEST.RESPONSE.redirect(REQUEST.HTTP_REFERER)
             # return
             current_rating = adapted.getRating(self.id)
-            self.portal_moduledb.sqlDeregisterRating(moduleid=self.id, 
-                                                     version=self.latest.version, 
+            self.portal_moduledb.sqlDeregisterRating(moduleid=self.id,
+                                                     version=self.latest.version,
                                                      rating=current_rating)
 
         adapted.rate(self.id, value)
-        self.portal_moduledb.sqlRegisterRating(moduleid=self.id, 
-                                               version=self.latest.version, 
+        self.portal_moduledb.sqlRegisterRating(moduleid=self.id,
+                                               version=self.latest.version,
                                                rating=value)
         notify(ModuleRatedEvent(self))
-           
+
         if REQUEST is not None:
             msg = _("Your rating has been registered")
             getToolByName(self, 'plone_utils').addPortalMessage(msg)
@@ -706,4 +706,3 @@ class ModuleVersionStub(SimpleItem, PropertyManager):
             return None
 
 InitializeClass(ModuleVersionStub)
-

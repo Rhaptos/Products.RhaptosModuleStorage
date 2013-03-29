@@ -24,7 +24,7 @@ from Products.CMFCore.utils import getToolByName
 from Products.CNXMLDocument.CNXMLFile import CNXMLFile
 from Products.CNXMLDocument import XMLService
 from Products.CNXMLDocument import CNXML_SEARCHABLE_XSL as baretext
-from Products.CNXMLDocument.newinterfaces import IMDML 
+from Products.CNXMLDocument.newinterfaces import IMDML
 from DBIterator import rhaptosdb_iterator
 from zope.interface import implements
 from Products.CacheSetup.cmf_utils import _checkConditionalGET, _setCacheHeaders
@@ -40,7 +40,7 @@ def set_mtime(ob, t):
 class ModuleFile(rhaptosdb_iterator):
     """A wrapper around the db iterator to provide some file-type methods"""
     isPrincipiaFolderish = False
-    
+
     def __init__(self, parent, *args, **kw):
         """Create ModuleFile, backed by DBIterator StreamIterator.
         See the init of that class for most of the init args. This adds 'parent'.
@@ -81,10 +81,10 @@ class ModuleFile(rhaptosdb_iterator):
 
     def modified(self):
         return getattr(self,'revised')
-    
+
     def data(self):
         return self.__str__()
-    
+
     def getPhysicalPath(self):
         return self._parent.getPhysicalPath() + (self.name,)
 
@@ -96,13 +96,13 @@ class ModuleFile(rhaptosdb_iterator):
             return str(res['mimetype'])
         else:
             return None
-    
+
 
 class ModuleView(SimpleItem):
     """Dyamically created Zope object for displaying Modules"""
 
     security = AccessControl.ClassSecurityInfo()
-    
+
     implements(IMDML)
 
     meta_type = 'Rhaptos Module View'
@@ -281,7 +281,7 @@ class ModuleView(SimpleItem):
     def wrapBodyText(self, terms, open_wrap_tag='<b>', close_wrap_tag='</b>'):
         """Wrap matches to list of terms with tags. Returns tuple of (excerpt,fulltext)"""
         q = '&'.join(terms)
-        res=self.portal_moduledb.sqlWrapText(text=self.bareText(), query=q, 
+        res=self.portal_moduledb.sqlWrapText(text=self.bareText(), query=q,
                              open_wrap_tag=open_wrap_tag, close_wrap_tag=close_wrap_tag)
         return (res[0].headline,res[0].fulltext)
 
@@ -345,10 +345,10 @@ class ModuleView(SimpleItem):
 
     security.declarePublic('subject')
     subject = ComputedAttribute(lambda self: self._getDBProperty('subject'), 1)
-    
+
     security.declarePublic('roles')
     roles = ComputedAttribute(lambda self: self._getDBProperty('roles'), 1)
-    
+
     # collection attributes, which don't matter here, but set to make sure the catalog doesn't pick something else up
     # FIXME: a more general way to do this (probably defining all index/metadata names on the Repository object) when
     # types become more flexible.
@@ -361,7 +361,7 @@ class ModuleView(SimpleItem):
     def getFile(self, name):
         """Retrieve a module file from DB"""
         db_str = getattr(self,self.portal_moduledb.db).connection_string
-        
+
         mf = ModuleFile(modid=self.objectId,version=self.version,name=name,db_connect=db_str,parent=self)
         try:
             # for when file is fetched on its own, we want to say some things about it;
@@ -379,7 +379,7 @@ class ModuleView(SimpleItem):
                 pass
         return mf
 
-        
+
     security.declarePrivate('getFileSize')
     def getFileSize(self, name):
         """Retrieve a module file size from DB"""
@@ -390,7 +390,7 @@ class ModuleView(SimpleItem):
             return filesize
         else:
            raise KeyError, "No such file %s/%s/%s" % (self.objectId,self.version,name)
-        
+
     security.declarePrivate('getDoctype')
     def getDoctype(self):
         """Get module's document type"""
@@ -431,14 +431,14 @@ class ModuleView(SimpleItem):
         urltool = getToolByName(self, 'portal_url')
         source = '/'.join(('',) + urltool.getRelativeContentPath(self)[:-1] + (self.version, ''))  # '/content/m9000/2.34/'
         return self.portal_linkmap.searchLinks(source)
-        
+
     security.declarePublic('getParent')
     def getParent(self):
         id = self._getDBProperty('parent_id')
         version = self._getDBProperty('parent_version')
         if id:
             return self.getRhaptosObject(id, version)
-        
+
     security.declarePrivate('getVersion')
     def getVersion(self):
         """Return version string or None if version is 'latest'"""
@@ -447,13 +447,13 @@ class ModuleView(SimpleItem):
         else:
             return self.id
 
-                
+
     security.declarePublic('source')
     def source(self):
         """Get module source"""
         self.REQUEST.RESPONSE.setHeader('Content-Type', "application/xml")
         self._setLastModHeader()
-        if self.REQUEST.REQUEST_METHOD == 'HEAD': return 
+        if self.REQUEST.REQUEST_METHOD == 'HEAD': return
         return self.normalize()
 
 
@@ -469,7 +469,7 @@ class ModuleView(SimpleItem):
                 return  # HEAD short-circuiting
 
             if self.id == 'latest':  # Redirect to specific version: 302 since it'll change w/ each publish
-                path = self.REQUEST.URL2 + '/' + self.version 
+                path = self.REQUEST.URL2 + '/' + self.version
                 path = path + '/?' + self.REQUEST.QUERY_STRING
                 self.REQUEST.RESPONSE.redirect(path, status=302)
                 return
@@ -485,32 +485,32 @@ class ModuleView(SimpleItem):
             else:
                 file = self.downloadEPUB()
             if file:
-        	REQUEST.RESPONSE.setHeader('Cache-Control', 'max-age=0, s-maxage=31536000, public, must-revalidate')
-	    return file
+                REQUEST.RESPONSE.setHeader('Cache-Control', 'max-age=0, s-maxage=31536000, public, must-revalidate')
+            return file
         elif request_format == 'offline':
             return self.downloadOfflineZip()
         else:
-    	    resp = self.module_render()
-    	    
-    	    if REQUEST.RESPONSE.getStatus() in (301, 302):
-    		return resp
-    		
-    	    pcs = self.portal_cache_settings
-    	    view = 'module_render'
-    	    member = pcs.getMember()
-    	    rule, header_set = pcs.getRuleAndHeaderSet(REQUEST, self, view, member)
-    	    if header_set is not None:
-    	        expr_context = rule._getExpressionContext(REQUEST, self, view, member, keywords={})
-    	    else:
-    		expr_context = None
-    	    _setCacheHeaders(self, {}, rule, header_set, expr_context)
+            resp = self.module_render()
+
+            if REQUEST.RESPONSE.getStatus() in (301, 302):
+                return resp
+
+            pcs = self.portal_cache_settings
+            view = 'module_render'
+            member = pcs.getMember()
+            rule, header_set = pcs.getRuleAndHeaderSet(REQUEST, self, view, member)
+            if header_set is not None:
+                expr_context = rule._getExpressionContext(REQUEST, self, view, member, keywords={})
+            else:
+                expr_context = None
+            _setCacheHeaders(self, {}, rule, header_set, expr_context)
             return resp
 
     security.declarePrivate('testIfModSince')
     def testIfModSince(self):
-        """Test if the current REQUEST has an 'If-Modified-Since' header, and if so, test it. 
+        """Test if the current REQUEST has an 'If-Modified-Since' header, and if so, test it.
         Returns True for 'not modified'. False means either 'was modified' or 'no header'"""
-        
+
         ifmodsince = self.REQUEST.get_header('If-Modified-Since', None)
         try:
             if ifmodsince:
@@ -518,7 +518,7 @@ class ModuleView(SimpleItem):
         except DTSyntaxError:
             ifmodsince = None # bad date, just ignore, per spec. See also Zope's OFS/Image.py
 
-        # short circuit for if-modified-since: spec recommends clients send value from 
+        # short circuit for if-modified-since: spec recommends clients send value from
         # previous Modified header, so the = case could be significant
         return bool (ifmodsince and self.revised <= ifmodsince)
 
@@ -613,7 +613,7 @@ class ModuleView(SimpleItem):
                 else:
                     export_file.write(export)
                 export_file.close()
-        
+
                 files = self.objectIds()
                 for fname in files:
                 #FIXME should be someway to offload the file-from-db-to-filesystem
@@ -621,19 +621,19 @@ class ModuleView(SimpleItem):
                     export_file = open(os.path.join(wd, fname), 'wb')
                     export_file.write(str(export))
                     export_file.close()
-                
+
                 pdf_tool = getToolByName(self, 'portal_pdflatex')
-        
+
                 params = {}
-        
+
                 data = pdf_tool.convertFSDirToPDF(wd, 'export.cnxml', **params)
                 printTool.setFile( self.objectId,  self.version,'pdf',data)
                 printTool.setStatus( self.objectId,  self.version,'pdf','succeeded')
-        
+
                 shutil.rmtree(wd)
 
         self.REQUEST.RESPONSE.setHeader('Content-Type', 'application/pdf')
-        self.REQUEST.RESPONSE.setHeader('Content-Disposition', 'attachment; filename=%s.pdf' % self.objectId) 
+        self.REQUEST.RESPONSE.setHeader('Content-Disposition', 'attachment; filename=%s.pdf' % self.objectId)
 
         return data
 
@@ -708,7 +708,7 @@ class ModuleView(SimpleItem):
                 {'id':'print', 'url':'?format=pdf', 'name':'Print'}]
 
     security.declarePublic('rating')
-    def rating(self):       
+    def rating(self):
         # xxx: it seems impossibly difficult to just delegate to the wrapped
         # object.
         res = self.portal_moduledb.sqlGetRating(moduleid=self.objectId, version=self.version)
@@ -721,7 +721,7 @@ class ModuleView(SimpleItem):
         return round(totalrating * 1.0 / votes,1)
 
     security.declarePublic('numberOfRatings')
-    def numberOfRatings(self):       
+    def numberOfRatings(self):
         # xxx: it seems impossibly difficult to just delegate to the wrapped
         # object.
         res = self.portal_moduledb.sqlGetRating(moduleid=self.objectId, version=self.version)
@@ -760,12 +760,12 @@ class ModuleView(SimpleItem):
     def getIcon(self, *args):
         """CMF Combatibility method"""
         return self.icon
-    
-    security.declarePublic('enqueue')    
+
+    security.declarePublic('enqueue')
     def enqueue(self):
-        """Add module to queue tool to recreate module export zip, 
+        """Add module to queue tool to recreate module export zip,
            epub and offline HTML
-           
+
            returns string message
         """
         qtool = getToolByName(self, 'queue_tool')
