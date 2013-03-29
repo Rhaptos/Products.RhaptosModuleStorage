@@ -206,16 +206,20 @@ class ModuleVersionStorage(SimpleItem):
         ### it should subscribe to the event for VersionFolders being published
         # lens notification
         self.lens_tool.notifyLensContainedObject(object)
-        
-        # queue insertions
+
+        # queue insertions for export and print
         qtool = getToolByName(self, 'queue_tool')
-        key = "modexport_%s" % object.objectId
-        dictRequest = { "id":object.objectId,
-                        "version":object.version,
-                        "serverURL":self.REQUEST['SERVER_URL']}
-        script_location = 'SCRIPTSDIR' in os.environ and os.environ['SCRIPTSDIR'] or '.'
-        qtool.add(key, dictRequest,
-                  "%s/create_and_store_pub_module_export.zctl" % script_location)
+        for key_prefix in ('modexport_', 'modprint_',):
+            key = key_prefix + object.objectId
+            dictRequest = { "id":object.objectId,
+                            "version":object.version,
+                            "serverURL":self.REQUEST['SERVER_URL']}
+            # Note: The last parameter is 'None' because we no longer
+            #   send the script location to the queue. This last
+            #   parameter is an artifact of the previous
+            #   implementation that used an internal queue system.
+            qtool.add(key, dictRequest, None)
+
         ### End Event System Hack
 
     def deleteObject(self, objectId, version=None):

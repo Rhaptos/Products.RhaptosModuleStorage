@@ -769,13 +769,13 @@ class ModuleView(SimpleItem):
            returns string message
         """
         qtool = getToolByName(self, 'queue_tool')
-        key = "modexport_%s" % self.objectId
-        dictRequest = { "id":self.objectId,
-                        "version":self.version,
-                        "serverURL":self.REQUEST['SERVER_URL']}
-        script_location = 'SCRIPTSDIR' in os.environ and os.environ['SCRIPTSDIR'] or '.'
-        qtool.add(key, dictRequest,"%s/create_and_store_pub_module_export.zctl" % script_location)
-        return "modexport enqueued"
+        for key_prefix in ('modexport_', 'modprint_',):
+            key = key_prefix + self.objectId
+            dictRequest = { "id":self.objectId,
+                            "version":self.version,
+                            "serverURL":self.REQUEST['SERVER_URL']}
+            qtool.add(key, dictRequest, None)
+        return "modexport modprint enqueued"
 
     # Set default roles for these permissions
     security.setPermissionDefault('Edit Rhaptos Object', ('Manager', 'Owner','Maintainer'))
