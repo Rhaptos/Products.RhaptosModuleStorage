@@ -279,18 +279,18 @@ CREATE TABLE similarities (
 
 CREATE UNIQUE INDEX similarities_objectid_version_idx ON similarities (objectid, version);
 
-CREATE OR REPLACE FUNCTION title_order(text) RETURNS text AS '
+CREATE OR REPLACE FUNCTION title_order(text) RETURNS text AS $$
 begin
-if lower(substr($1, 1, 4)) = \'the \' then
+if lower(substr($1, 1, 4)) = 'the ' then
  return substr($1, 5);
-elsif lower(substr($1,1,3)) = \'an \' then
+elsif lower(substr($1,1,3)) = 'an ' then
  return substr($1,4);
-elsif lower(substr($1,1,2)) = \'a \' then
+elsif lower(substr($1,1,2)) = 'a ' then
  return substr($1,3);
 end if;
 return $1;
 end;
-' language 'plpgsql' immutable;
+$$ language 'plpgsql' immutable;
 
 create index latest_modules_title_idx on latest_modules (upper(title_order(name)));
 
@@ -342,7 +342,7 @@ CREATE OR REPLACE FUNCTION fullnames (ANYARRAY)
 RETURNS TEXT
 IMMUTABLE STRICT
 LANGUAGE PLPGSQL
-AS '
+AS $$ 
 DECLARE 
   name text;
   names text;
@@ -354,12 +354,12 @@ BEGIN
     THEN
       names = fullname($1[i]);
     ELSE
-      names := names ||\', \' ||  fullname($1[i]);
+      names := names ||', ' ||  fullname($1[i]);
     END IF;
   END LOOP;
 RETURN names;
 END;
-';
+$$;
 
 
 CREATE TABLE tags (

@@ -120,26 +120,36 @@ def install_plpgsql(args):
             raise
     
 def install_tsearch(args):
-    ph = package_home(product_globals)
-    tsearch_paths = ['/usr/share/postgresql/8.3/contrib/tsearch2.sql',
-                     '/usr/share/postgresql/8.2/contrib/tsearch2.sql',
-                     ph+'/sql/tsearch2.sql']
-    for ts_file in tsearch_paths:
-        try:
-            ts_schema = open(ts_file,'r').read()
-            break
-        except IOError:
-            pass # find first working one
+    #Let's try the extension interface, first:
+    try:
+        ts_file = "extension"
+        _dbadminexec(args, "create extension tsearch2")
+    except psycopg.ProgrammingError, e:
+        if 'syntax error at or near "extension"' in str(e):
+            #older version, try the hard way
+            ph = package_home(product_globals)
+            tsearch_paths = ['/usr/share/postgresql/8.4/contrib/tsearch2.sql',
+                             '/usr/share/postgresql/8.3/contrib/tsearch2.sql',
+                             '/usr/share/postgresql/8.2/contrib/tsearch2.sql',
+                             ph+'/sql/tsearch2.sql']
+            for ts_file in tsearch_paths:
+                try:
+                    ts_schema = open(ts_file,'r').read()
+                    break
+                except IOError:
+                    pass # find first working one
 
-    _dbadminexec(args, ts_schema)
-    command = """
-        grant all on pg_ts_cfg to public;
-        grant all on pg_ts_cfgmap to public;
-        grant all on pg_ts_dict to public;
-        grant all on pg_ts_parser to public;
-        update pg_ts_cfg set locale = (select current_setting('lc_collate')) where ts_name = 'default';
-        """
-    _dbadminexec(args, command)
+            _dbadminexec(args, ts_schema)
+            command = """
+                grant all on pg_ts_cfg to public;
+                grant all on pg_ts_cfgmap to public;
+                grant all on pg_ts_dict to public;
+                grant all on pg_ts_parser to public;
+                update pg_ts_cfg set locale = (select current_setting('lc_collate')) where ts_name = 'default';
+                """
+            _dbadminexec(args, command)
+        else:
+            raise
 
     return ts_file
 
@@ -254,7 +264,8 @@ def setupDBConnection(self, portal):
         install_plpgsql(d)
         out.write('Install plpgsql in database %(dbname)s\n' %d)
 
-    c.execute("SELECT 1 FROM pg_type WHERE typname='tsquery'")
+    #Newest versions have the type, but need the compatability code
+    c.execute("SELECT 1 FROM pg_proc WHERE proname='rank_cd'")
     if not c.rowcount:
         ts_location = install_tsearch(d)
         out.write('Install tsearch in database %s from %s\n' %(d['dbname'], ts_location))
