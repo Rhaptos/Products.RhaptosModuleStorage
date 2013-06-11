@@ -55,9 +55,9 @@ def _dbadminexec(d, execstring, template=False):
     """Execute a command as the DB admin using arguments from 'd' """
     try:
         if template:
-            dsn = _dsn(d, dbname='template1', user=d['admin'], password=d['adminpass'])
+            dsn = _dsn(d, dbname='template1', user=d['admin'], userpass=d['adminpass'])
         else:
-            dsn = _dsn(d, user=d['admin'], password=d['adminpass'])
+            dsn = _dsn(d, user=d['admin'], userpass=d['adminpass'])
         con = psycopg.connect(dsn)
     except psycopg.OperationalError, e:
         # Badadmin Username: Fail back to user
@@ -238,8 +238,8 @@ def setupDBConnection(self, portal):
             portal._dbopts['user'] = settings.get('user', '')
             portal._dbopts['userpass'] = settings.get('password', '')
             portal._dbopts['dbname'] = settings.get('dbname', '')
-            portal._dbopts['server'] = ''
-            portal._dbopts['port'] = ''
+            portal._dbopts['server'] = settings.get('server', '')
+            portal._dbopts['port'] = settings.get('port', '')
 
     d = portal._dbopts
 
