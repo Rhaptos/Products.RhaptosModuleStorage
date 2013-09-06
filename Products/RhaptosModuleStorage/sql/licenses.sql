@@ -24,4 +24,5 @@ VALUES (10,'by-sa','2.0','Creative Commons Attribution-ShareAlike' License','htt
 INSERT INTO licenses (licenseid, code, "version", name, url) 
 VALUES (11,'by','3.0','Creative Commons Attribution' License','http://creativecommons.org/licenses/by/3.0/');
 VALUES (12,'by-nc-sa','3.0','Creative Commons Attribution-NonCommercial-ShareAlike' License','http://creativecommons.org/licenses/by-nc-sa/3.0/');
-SELECT pg_catalog.setval('licenses_licenseid_seq', 12, true);
+VALUES (13,'by-sa','3.0','Creative Commons Attribution-ShareAlike' License','http://creativecommons.org/licenses/by-sa/3.0/');
+SELECT pg_catalog.setval('licenses_licenseid_seq', 13, true);
