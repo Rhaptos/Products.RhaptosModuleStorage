@@ -1,3 +1,6 @@
+RhaptosModuleStorage-0.59
+  - added support for content specific licenses
+
 RhaptosModuleStorage-0.58
   - psycopg2 upgrade
 
