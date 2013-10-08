@@ -165,22 +165,28 @@ class ModuleDBTool(UniqueObject, SimpleItem):
                                  parent=parent, language=object.language)
 
         # Put the file objects in the files table
-        for fob in object.objectValues():
-            if hasattr(fob,'data'): #It's a file object
-                fid = self._getFileID(fob)
-                self.sqlInsertModuleFile(moduleid=object.objectId, version=object.version, fileid=fid, filename=fob.id,mimetype=fob.content_type)
+        files = [f for f in object.objectValues() if hasattr(f,'data')] #It's a file object
+        defaultFile = gettr(object,'getDefaultFile',lambda : None)()
+        # Move index.cnxml (or other default file) to end of list, so all files referenced by it are in db first
+        if defaultFile:
+            files.append(files.pop(files.index(defaultFile)))
+
+        for fob in files:
+            fid = self._getFileID(fob)
+            self.sqlInsertModuleFile(moduleid=object.objectId, version=object.version, fileid=fid, filename=fob.id,mimetype=fob.content_type)
 
         # Put non-blank keywords into module-keyword table
         for word in [' '.join(w.strip().split()) for w in object.keywords if w.strip()]:
             keywordId = self._getKeywordID(word)
             self.sqlInsertModuleKeyword(moduleid=object.objectId, version=object.version, keywordid=keywordId)
 
-        #Insert optional roles, if any
+        # Insert optional roles, if any
         for role in object.optional_roles.keys():
             value = getattr(object,role.lower()+'s',None)
             if value:
                 self.sqlInsertModuleOptionalRole(moduleid=object.objectId, version=object.version,rolename=role,persons=value)
 
+        # Stores subjects as tags
         if type(_utf8(object.subject)) == type(''):
             self.sqlInsertModuleTag(moduleid=object.objectId, version=object.version,tag=_utf8(object.subject))
         else:
