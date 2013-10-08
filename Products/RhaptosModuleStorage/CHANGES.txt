@@ -1,3 +1,6 @@
+RhaptosModuleStorage-0.60
+  - store defaultfile last, so referenced resources are already present
+
 RhaptosModuleStorage-0.59
   - added support for content specific licenses
 
