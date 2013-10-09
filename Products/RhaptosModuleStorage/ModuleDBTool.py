@@ -166,7 +166,7 @@ class ModuleDBTool(UniqueObject, SimpleItem):
 
         # Put the file objects in the files table
         files = [f for f in object.objectValues() if hasattr(f,'data')] #It's a file object
-        defaultFile = gettr(object,'getDefaultFile',lambda : None)()
+        defaultFile = getattr(object,'getDefaultFile',lambda : None)()
         # Move index.cnxml (or other default file) to end of list, so all files referenced by it are in db first
         if defaultFile:
             files.append(files.pop(files.index(defaultFile)))
