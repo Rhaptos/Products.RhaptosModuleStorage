@@ -7,6 +7,7 @@ max_rows: 0
 
 SELECT
   m.moduleid AS "objectId", m.moduleid AS id, m.portal_type, m.version, m.name,m.name as title,  m.name as "Title", m.created, m.revised, 
+  m.uuid || '@' || concat_ws('.', m.major_version, m.minor_version) AS ident_hash,
   abstract, 1 as weight, m.stateid, m.doctype,l.url AS license, m.module_ident AS ident, m.submitter, 
   p.moduleid AS parent_id, p.version AS parent_version,
   m.authors as authors, m.licensors as licensors, m.maintainers as maintainers,
