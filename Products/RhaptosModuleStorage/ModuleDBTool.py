@@ -64,6 +64,7 @@ class ModuleDBTool(UniqueObject, SimpleItem):
     sqlInsertModuleKeyword = ZSQLFile('sql/insertKeywords', globals(), __name__='sqlInsertModuleKeyword')
     sqlInsertModuleOptionalRole = ZSQLFile('sql/insertOptionalRoles', globals(), __name__='sqlInsertModuleOptionalRole')
     sqlGetLicense = ZSQLFile('sql/getLicense', globals(), __name__='sqlGetLicense')
+    sqlGetLicenses = ZSQLFile('sql/getLicenses', globals(), __name__='sqlGetLicense')
     sqlGetTags = ZSQLFile('sql/getTags', globals(), __name__='sqlGetTags')
     sqlSearchModules = ZSQLFile('sql/searchModules', globals(), __name__='sqlSearchModules')
     sqlSearchModulesByDate = ZSQLFile('sql/searchModulesByDate', globals(), __name__='sqlSearchModulesByDate')
