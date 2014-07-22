@@ -1,5 +1,5 @@
 RhaptosModuleStorage-0.61
-  - add ident_hash t oreturn fro mdate search, for OAI
+  - add ident_hash to return from date search, for OAI
 
 RhaptosModuleStorage-0.60
   - store defaultfile last, so referenced resources are already present
