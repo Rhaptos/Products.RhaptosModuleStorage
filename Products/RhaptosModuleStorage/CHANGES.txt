@@ -1,3 +1,6 @@
+RhaptosModuleStorage-0.62
+  - store google_analytics codes in db
+
 RhaptosModuleStorage-0.61
   - add ident_hash to return from date search, for OAI
 
