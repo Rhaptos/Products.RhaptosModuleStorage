@@ -163,7 +163,8 @@ class ModuleDBTool(UniqueObject, SimpleItem):
                                  doctype=getattr(object, 'doctype', ''),  # 0.6 loses doctype attr
                                  submitter=object.submitter,
                                  submitlog=object.submitlog,
-                                 parent=parent, language=object.language)
+                                 parent=parent, language=object.language,
+                                 google_analytics=object.getGoogleAnalyticsTrackingCode())
 
         # Put the file objects in the files table
         files = [f for f in object.objectValues() if hasattr(f,'data')] #It's a file object
