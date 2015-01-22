@@ -82,6 +82,7 @@ class ModuleDBTool(UniqueObject, SimpleItem):
     sqlGetFileByMd5 = ZSQLFile('sql/getFileByMd5', globals(), __name__='sqlGetFileByMd5')
     sqlInsertFile = ZSQLFile('sql/insertFile', globals(), __name__='sqlInsertFile')
     sqlInsertModuleFile = ZSQLFile('sql/insertModuleFile', globals(), __name__='sqlInsertModuleFile')
+    sqlGetCollectionTree = ZSQLFile('sql/getCollectionTree', globals(), __name__='sqlGetCollectionTree')
 
     # Member-data functions
     sqlGetAuthorByFirstChar = ZSQLFile('sql/getAuthorByFirstChar', globals(), __name__='sqlGetAuthorByFirstChar')
