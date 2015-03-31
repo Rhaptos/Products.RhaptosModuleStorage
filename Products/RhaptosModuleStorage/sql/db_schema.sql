@@ -85,6 +85,7 @@ CREATE TABLE "modules" (
 	"maintainers" text[],
 	"licensors" text[],
 	"parentauthors" text[],
+    "print_style" text,
 	FOREIGN KEY (abstractid) REFERENCES "abstracts" DEFERRABLE,
 	FOREIGN KEY (stateid) REFERENCES "modulestates" DEFERRABLE, 
 	FOREIGN KEY (parent) REFERENCES "modules" DEFERRABLE, 
@@ -117,7 +118,8 @@ CREATE TABLE "latest_modules" (
 	"authors" text[],
 	"maintainers" text[],
 	"licensors" text[],
-	"parentauthors" text[]
+	"parentauthors" text[],
+    "print_style" text
 );
 
 CREATE INDEX latest_modules_upmodid_idx ON latest_modules  (upper(moduleid));
@@ -133,11 +135,11 @@ BEGIN
       INSERT into latest_modules ( module_ident,portal_type,moduleid, version, name, 
   		created, revised, abstractid, stateid, doctype, licenseid, 
   		submitter,submitlog, parent, language,
-		authors, maintainers, licensors, parentauthors) 
+		authors, maintainers, licensors, parentauthors, print_style) 
   	VALUES ( NEW.module_ident,NEW.portal_type,NEW.moduleid, NEW.version, NEW.name,
   	 NEW.created, NEW.revised, NEW.abstractid, NEW.stateid, NEW.doctype, NEW.licenseid, 
   	 NEW.submitter, NEW.submitlog, NEW.parent, NEW.language,
-	 NEW.authors, NEW.maintainers, NEW.licensors, NEW.parentauthors );
+	 NEW.authors, NEW.maintainers, NEW.licensors, NEW.parentauthors, NEW.print_style );
   END IF;
 
   IF TG_OP = ''UPDATE'' THEN
@@ -159,7 +161,8 @@ BEGIN
 	authors=NEW.authors,
 	maintainers=NEW.maintainers,
 	licensors=NEW.licensors,
-	parentauthors=NEW.parentauthors 
+	parentauthors=NEW.parentauthors,
+    print_style=NEW.print_style
         WHERE module_ident=NEW.module_ident;
   END IF;
 
@@ -191,13 +194,13 @@ CREATE VIEW all_modules as
 	SELECT module_ident,portal_type,moduleid, version, name, 
 			created, revised, abstractid, stateid, doctype, licenseid, 
 			submitter, submitlog, parent, language,
-			authors, maintainers, licensors, parentauthors
+			authors, maintainers, licensors, parentauthors, print_style
 	FROM modules
 	UNION ALL
 	SELECT module_ident,portal_type,moduleid, 'latest', name, 
 			created, revised, abstractid, stateid, doctype, licenseid, 
 			submitter, submitlog, parent, language,
-			authors, maintainers, licensors, parentauthors
+			authors, maintainers, licensors, parentauthors, print_style
 	FROM latest_modules;
 
 CREATE VIEW current_modules AS 

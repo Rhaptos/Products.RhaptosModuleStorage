@@ -10,7 +10,7 @@ max_rows: 0
 <dtml-if versionedMods>
 SELECT
   m.moduleid AS "objectId", m.portal_type, m.version, m.version as "reqVersion", m.name, m.created as _created, m.revised as _revised, 
-  abstract, m.stateid, m.doctype,l.url AS license, m.module_ident AS ident, m.submitter, m.submitlog,
+  abstract, m.stateid, m.doctype,l.url AS license, m.module_ident AS ident, m.submitter, m.submitlog, m.print_style,
   p.moduleid AS parent_id, p.version AS parent_version,
   m.authors as authors, m.licensors as licensors, m.maintainers as maintainers, COALESCE(m.parentauthors,ARRAY(select ''::text where false)) as "parentAuthors", m.language as language
 FROM modules m
@@ -33,7 +33,7 @@ UNION ALL
 <dtml-if latestMods>
 SELECT
   m.moduleid AS "objectId", m.portal_type, m.version, 'latest' as "reqVersion", m.name, m.created as _created, m.revised as _revised, 
-  abstract, m.stateid, m.doctype,l.url AS license, m.module_ident AS ident, m.submitter, 
+  abstract, m.stateid, m.doctype,l.url AS license, m.module_ident AS ident, m.submitter,  m.submitlog, m.print_style,
   p.moduleid AS parent_id, p.version AS parent_version,
   m.authors as authors, m.licensors as licensors, m.maintainers as maintainers, m.parentauthors as parentauthors
 FROM latest_modules m

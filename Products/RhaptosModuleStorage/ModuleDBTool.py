@@ -165,7 +165,8 @@ class ModuleDBTool(UniqueObject, SimpleItem):
                                  submitter=object.submitter,
                                  submitlog=object.submitlog,
                                  parent=parent, language=object.language,
-                                 google_analytics=object.getGoogleAnalyticsTrackingCode())
+                                 google_analytics=object.getGoogleAnalyticsTrackingCode(),
+                                 print_style=getattr(object,'print_style',None))
 
         # Put the file objects in the files table
         files = [f for f in object.objectValues() if hasattr(f,'data')] #It's a file object
