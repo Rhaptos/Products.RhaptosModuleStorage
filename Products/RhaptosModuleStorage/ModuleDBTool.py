@@ -150,7 +150,7 @@ class ModuleDBTool(UniqueObject, SimpleItem):
         # Put new version of module into the DB
         parentObj = object.getParent()
         parent = parentObj and self.sqlGetModule(id=parentObj.objectId,version=parentObj.version)[0].ident or None
-        print_style = object.portal_type == 'Collection' and object.parameters.printstyle or None
+        print_style = object.portal_type == 'Collection' and object.parameters.getProperty('printstyle') or None
         self.sqlInsertNewVersion(moduleid=object.objectId,
                                  portal_type=object.portal_type,
                                  version=object.version,
