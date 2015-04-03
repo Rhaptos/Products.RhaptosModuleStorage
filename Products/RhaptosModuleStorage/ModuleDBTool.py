@@ -150,6 +150,7 @@ class ModuleDBTool(UniqueObject, SimpleItem):
         # Put new version of module into the DB
         parentObj = object.getParent()
         parent = parentObj and self.sqlGetModule(id=parentObj.objectId,version=parentObj.version)[0].ident or None
+        print_style = object.portal_type == 'Collection' and object.parameters.getProperty('printstyle') or None
         self.sqlInsertNewVersion(moduleid=object.objectId,
                                  portal_type=object.portal_type,
                                  version=object.version,
@@ -165,7 +166,8 @@ class ModuleDBTool(UniqueObject, SimpleItem):
                                  submitter=object.submitter,
                                  submitlog=object.submitlog,
                                  parent=parent, language=object.language,
-                                 google_analytics=object.getGoogleAnalyticsTrackingCode())
+                                 google_analytics=object.getGoogleAnalyticsTrackingCode(),
+                                 print_style=print_style)
 
         # Put the file objects in the files table
         files = [f for f in object.objectValues() if hasattr(f,'data')] #It's a file object
