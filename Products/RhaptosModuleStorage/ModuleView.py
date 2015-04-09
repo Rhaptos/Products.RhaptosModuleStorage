@@ -639,12 +639,16 @@ class ModuleView(SimpleItem):
 
 
     security.declarePublic('checkout')
-    def checkout(self, container):
+    def checkout(self, container, skipfiles=None):
         """Checkout a copy of the module"""
+
+        if skipfiles is None:
+            skipfiles = ['index.cnxml.html']
 
         files = self.objectIds()
         for fname in files:
-            self._createFile(fname,self.getFile(fname).read(), container)
+            if fname not in skipfiles:
+                self._createFile(fname,self.getFile(fname).read(), container)
 
     def _createFile(self, name, body, container):
         """Create a file from a name and bits into the specified ZODB container"""
