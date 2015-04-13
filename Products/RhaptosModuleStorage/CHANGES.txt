@@ -1,3 +1,7 @@
+RhaptosModuleStorage-1.0.0
+  - store print-style codes in db
+  - reserve index.cnxml.html (don't check it out)
+
 RhaptosModuleStorage-0.62
   - store google_analytics codes in db
 
