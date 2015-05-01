@@ -643,7 +643,7 @@ class ModuleView(SimpleItem):
         """Checkout a copy of the module"""
 
         if skipfiles is None:
-            skipfiles = ['index.cnxml.html']
+            skipfiles = ['index.cnxml.html', 'index.html.cnxml']
 
         files = self.objectIds()
         for fname in files:
