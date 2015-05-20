@@ -13,7 +13,7 @@ VALUES (0,NULL,NULL,NULL,NULL),
 (10,'by-sa','2.0','Creative Commons Attribution-ShareAlike License','http://creativecommons.org/licenses/by-sa/2.0'),
 (11,'by','3.0','Creative Commons Attribution License','http://creativecommons.org/licenses/by/3.0/'),
 (12,'by-nc-sa','3.0','Creative Commons Attribution-NonCommercial-ShareAlike License','http://creativecommons.org/licenses/by-nc-sa/3.0/'),
-(13,'by-sa','3.0','Creative Commons Attribution-ShareAlike License','http://creativecommons.org/licenses/by-sa/3.0/');
+(13,'by-sa','3.0','Creative Commons Attribution-ShareAlike License','http://creativecommons.org/licenses/by-sa/3.0/'),
 (14,'by','4.0','Creative Commons Attribution License','http://creativecommons.org/licenses/by/4.0/'),
 (15,'by-nc-sa','4.0','Creative Commons Attribution-NonCommercial-ShareAlike License','http://creativecommons.org/licenses/by-nc-sa/4.0/'),
 (16,'by-sa','4.0','Creative Commons Attribution-ShareAlike License','http://creativecommons.org/licenses/by-sa/4.0/');
