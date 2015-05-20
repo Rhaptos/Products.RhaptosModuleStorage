@@ -86,6 +86,7 @@ CREATE TABLE "modules" (
 	"licensors" text[],
 	"parentauthors" text[],
     "print_style" text,
+    "google_analytics" text,
 	FOREIGN KEY (abstractid) REFERENCES "abstracts" DEFERRABLE,
 	FOREIGN KEY (stateid) REFERENCES "modulestates" DEFERRABLE, 
 	FOREIGN KEY (parent) REFERENCES "modules" DEFERRABLE, 
@@ -119,7 +120,8 @@ CREATE TABLE "latest_modules" (
 	"maintainers" text[],
 	"licensors" text[],
 	"parentauthors" text[],
-    "print_style" text
+    "print_style" text,
+    "google_analytics" text
 );
 
 CREATE INDEX latest_modules_upmodid_idx ON latest_modules  (upper(moduleid));
@@ -135,11 +137,11 @@ BEGIN
       INSERT into latest_modules ( module_ident,portal_type,moduleid, version, name, 
   		created, revised, abstractid, stateid, doctype, licenseid, 
   		submitter,submitlog, parent, language,
-		authors, maintainers, licensors, parentauthors, print_style) 
+		authors, maintainers, licensors, parentauthors, print_style, google_analytics) 
   	VALUES ( NEW.module_ident,NEW.portal_type,NEW.moduleid, NEW.version, NEW.name,
   	 NEW.created, NEW.revised, NEW.abstractid, NEW.stateid, NEW.doctype, NEW.licenseid, 
   	 NEW.submitter, NEW.submitlog, NEW.parent, NEW.language,
-	 NEW.authors, NEW.maintainers, NEW.licensors, NEW.parentauthors, NEW.print_style );
+	 NEW.authors, NEW.maintainers, NEW.licensors, NEW.parentauthors, NEW.print_style, NEW.google_analytics );
   END IF;
 
   IF TG_OP = ''UPDATE'' THEN
@@ -162,7 +164,8 @@ BEGIN
 	maintainers=NEW.maintainers,
 	licensors=NEW.licensors,
 	parentauthors=NEW.parentauthors,
-    print_style=NEW.print_style
+    print_style=NEW.print_style,
+    google_analytics=NEW.google_analytics
         WHERE module_ident=NEW.module_ident;
   END IF;
 
@@ -194,13 +197,13 @@ CREATE VIEW all_modules as
 	SELECT module_ident,portal_type,moduleid, version, name, 
 			created, revised, abstractid, stateid, doctype, licenseid, 
 			submitter, submitlog, parent, language,
-			authors, maintainers, licensors, parentauthors, print_style
+			authors, maintainers, licensors, parentauthors, print_style, google_analytics
 	FROM modules
 	UNION ALL
 	SELECT module_ident,portal_type,moduleid, 'latest', name, 
 			created, revised, abstractid, stateid, doctype, licenseid, 
 			submitter, submitlog, parent, language,
-			authors, maintainers, licensors, parentauthors, print_style
+			authors, maintainers, licensors, parentauthors, print_style, google_analytics
 	FROM latest_modules;
 
 CREATE VIEW current_modules AS 
