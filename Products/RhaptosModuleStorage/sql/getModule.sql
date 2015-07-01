@@ -20,3 +20,4 @@ m.licenseid = l.licenseid AND
 <dtml-sqltest version column="m.version" type="string">
 GROUP BY
 m.moduleid, m.portal_type, m.version, m.name, m.created, m.revised, abstract, m.stateid, m.doctype, l.url, m.module_ident, m.submitter, m.submitlog, p.moduleid, p.version, m.authors, m.licensors, m.maintainers, m.parentauthors, m.language, m.print_style
+ORDER BY  m.revised DESC LIMIT 1
