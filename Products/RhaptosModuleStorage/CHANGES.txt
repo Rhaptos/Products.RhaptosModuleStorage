@@ -1,3 +1,8 @@
+RhaptosModuleStorage-1.1.0
+  - make sure we only retrieve a single content object
+  - reserve other generated filename as well index.html.cnxml
+  - sync new install to production db (license, google_analytics)
+
 RhaptosModuleStorage-1.0.0
   - store print-style codes in db
   - reserve index.cnxml.html (don't check it out)
