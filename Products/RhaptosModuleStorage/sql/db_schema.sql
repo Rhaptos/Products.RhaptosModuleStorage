@@ -242,7 +242,9 @@ CREATE UNIQUE INDEX modulekeywords_module_ident_keywordid_idx ON
 CREATE TABLE files (
     fileid serial PRIMARY KEY,
     md5 text,
-    file bytea
+    sha1 text,
+    file bytea,
+    media_type text
 );
 
 CREATE INDEX files_md5_idx on files (md5);
@@ -264,8 +266,7 @@ CREATE TRIGGER update_file_md5
 CREATE TABLE module_files (
     module_ident integer references modules, 
     fileid integer references files,
-    filename text,
-    mimetype text
+    filename text
 );
 
 CREATE UNIQUE INDEX module_files_idx ON module_files (module_ident, filename);

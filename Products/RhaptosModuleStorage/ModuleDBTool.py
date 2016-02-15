@@ -178,7 +178,7 @@ class ModuleDBTool(UniqueObject, SimpleItem):
 
         for fob in files:
             fid = self._getFileID(fob)
-            self.sqlInsertModuleFile(moduleid=object.objectId, version=object.version, fileid=fid, filename=fob.id,mimetype=fob.content_type)
+            self.sqlInsertModuleFile(moduleid=object.objectId, version=object.version, fileid=fid, filename=fob.id)
 
         # Put non-blank keywords into module-keyword table
         for word in [' '.join(w.strip().split()) for w in object.keywords if w.strip()]:
@@ -231,7 +231,7 @@ class ModuleDBTool(UniqueObject, SimpleItem):
             if r.file == fdata:
                 return r.fileid
         # Fell through, must be new bytes
-        res = self.sqlInsertFile(file = Binary(fdata))
+        res = self.sqlInsertFile(file = Binary(fdata), media_type=fileob.content_type)
         return res[0].fileid
 
 def _utf8(thing):
