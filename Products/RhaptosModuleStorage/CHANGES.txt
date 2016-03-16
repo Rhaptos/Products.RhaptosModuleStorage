@@ -1,3 +1,6 @@
+RhaptosModuleStorage-1.1.1
+  - move mimetype from module_files to mediatype on files
+
 RhaptosModuleStorage-1.1.0
   - make sure we only retrieve a single content object
   - reserve other generated filename as well index.html.cnxml
