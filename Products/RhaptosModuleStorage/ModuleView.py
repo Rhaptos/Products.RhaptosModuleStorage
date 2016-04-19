@@ -90,13 +90,13 @@ class ModuleFile(rhaptosdb_iterator):
 
     def content_type(self):
         cur = self.db.cursor()
-        cur.execute('SELECT mimetype %s' % (self.statement))
+        cur.execute('SELECT media_type %s' % (self.statement))
         res =  cur.dictfetchone()
         if res:
-            return str(res['mimetype'])
+            return str(res['media_type'])
         else:
             return None
-    
+
 
 class ModuleView(SimpleItem):
     """Dyamically created Zope object for displaying Modules"""
