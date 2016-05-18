@@ -1,5 +1,5 @@
 <dtml-comment>
-arguments: file:string string:media_type
+arguments: file:string media_type:string
 </dtml-comment>
 
 INSERT INTO files 
