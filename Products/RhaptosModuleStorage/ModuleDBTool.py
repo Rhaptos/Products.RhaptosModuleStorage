@@ -13,6 +13,7 @@ Public License Version 2.1 (LGPL).  See LICENSE.txt for details.
 import os
 import re
 import md5
+from hashlib import sha1
 from psycopg2 import Binary
 import zLOG
 import AccessControl
@@ -226,9 +227,10 @@ class ModuleDBTool(UniqueObject, SimpleItem):
         # let's make sure we've got a utf-8 string
         fdata = _utf8(fileob.data)
         m=md5.new(fdata).hexdigest()
+        sha = sha1(fdata).hexdigest()
         res = self.sqlGetFileByMd5(md5=m)
         for r in res:
-            if r.file == fdata:
+            if sha1(r.file).hexdigest() == sha:
                 return r.fileid
         # Fell through, must be new bytes
         res = self.sqlInsertFile(file = Binary(fdata), media_type=fileob.content_type)
