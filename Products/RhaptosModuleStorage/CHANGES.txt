@@ -1,3 +1,6 @@
+RhaptosModuleStorage-1.1.2
+  - fix buffer vs. string comparision on storage of files
+
 RhaptosModuleStorage-1.1.1
   - move mimetype from module_files to mediatype on files
 
