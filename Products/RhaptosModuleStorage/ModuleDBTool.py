@@ -13,7 +13,10 @@ Public License Version 2.1 (LGPL).  See LICENSE.txt for details.
 import os
 import re
 import md5
-from hashlib import sha1
+try:
+        from hashlib import sha1
+except ImportError:
+        from sha import sha as sha1
 from psycopg2 import Binary
 import zLOG
 import AccessControl
@@ -226,7 +229,7 @@ class ModuleDBTool(UniqueObject, SimpleItem):
         """Return the fileid for a file, stored in the DB"""
         # let's make sure we've got a utf-8 string
         fdata = _utf8(fileob.data)
-        m=md5.new(fdata).hexdigest()
+        m = md5.new(fdata).hexdigest()
         sha = sha1(fdata).hexdigest()
         res = self.sqlGetFileByMd5(md5=m)
         for r in res:
