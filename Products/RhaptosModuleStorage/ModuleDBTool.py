@@ -60,6 +60,7 @@ class ModuleDBTool(UniqueObject, SimpleItem):
     sqlGetKeywords = ZSQLFile('sql/getKeywords', globals(), __name__='sqlGetKeywords')
     sqlGetHistory = ZSQLFile('sql/getHistory', globals(), __name__='sqlGetHistory')
     sqlGetNextModuleId = ZSQLFile('sql/getNextModuleId', globals(), __name__='sqlGetNextModuleId')
+    sqlGetNextCollectionId = ZSQLFile('sql/getNextCollectionId', globals(), __name__='sqlGetNextCollectionId')
     sqlInsertNewVersion = ZSQLFile('sql/insertNewVersion', globals(), __name__='sqlInsertNewVersion')
     sqlGetAbstractID = ZSQLFile('sql/getAbstractID', globals(), __name__=='sqlGetAbstractID')
     sqlInsertAbstract = ZSQLFile('sql/insertAbstract', globals(), __name__='sqlInsertAbstract')
