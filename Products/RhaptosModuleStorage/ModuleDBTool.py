@@ -88,6 +88,8 @@ class ModuleDBTool(UniqueObject, SimpleItem):
     sqlInsertFile = ZSQLFile('sql/insertFile', globals(), __name__='sqlInsertFile')
     sqlInsertModuleFile = ZSQLFile('sql/insertModuleFile', globals(), __name__='sqlInsertModuleFile')
     sqlGetCollectionTree = ZSQLFile('sql/getCollectionTree', globals(), __name__='sqlGetCollectionTree')
+    sqlGetPrintStyles = ZSQLFile('sql/getPrintStyles', globals(), __name__='sqlGetPrintStyles')
+
 
     # Member-data functions
     sqlGetAuthorByFirstChar = ZSQLFile('sql/getAuthorByFirstChar', globals(), __name__='sqlGetAuthorByFirstChar')
