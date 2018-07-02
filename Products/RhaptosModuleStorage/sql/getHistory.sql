@@ -8,4 +8,4 @@ max_rows: 0
 SELECT version, revised, submitter, submitlog
 FROM modules
 WHERE <dtml-sqltest id column="moduleid" type="string">
-ORDER BY revised DESC
+ORDER BY major_version DESC, minor_version DESC, revised DESC
