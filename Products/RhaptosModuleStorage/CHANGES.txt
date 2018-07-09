@@ -1,3 +1,5 @@
+RhaptosModuleStorage-1.3.1
+  - WHen fetching history, order explicitly by versions, not timestamp
 RhaptosModuleStorage-1.2.0
   - add access method for fetching print-styles from database
 
