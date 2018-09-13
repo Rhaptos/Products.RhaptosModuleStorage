@@ -96,6 +96,7 @@ class ModuleDBTool(UniqueObject, SimpleItem):
     sqlGetAuthorById = ZSQLFile('sql/getAuthorById', globals(), __name__='sqlGetAuthorById')
     sqlInsertMember = ZSQLFile('sql/insertMemberData', globals(), __name__='sqlInsertMember')
     sqlUpdateMember = ZSQLFile('sql/updateMemberData', globals(), __name__='sqlUpdateMember')
+    sqlUpdateMemberPassword = ZSQLFile('sql/updateMemberPassword', globals(), __name__='sqlUpdateMemberPassword')
 
     ##   ZMI methods
     manage_options=(( {'label':'Overview', 'action':'manage_overview'},
