@@ -97,6 +97,7 @@ class ModuleDBTool(UniqueObject, SimpleItem):
     sqlInsertMember = ZSQLFile('sql/insertMemberData', globals(), __name__='sqlInsertMember')
     sqlUpdateMember = ZSQLFile('sql/updateMemberData', globals(), __name__='sqlUpdateMember')
     sqlUpdateMemberPassword = ZSQLFile('sql/updateMemberPassword', globals(), __name__='sqlUpdateMemberPassword')
+    sqlUpdateMemberGroups = ZSQLFile('sql/updateMemberGroups', globals(), __name__='sqlUpdateMemberGroups')
 
     ##   ZMI methods
     manage_options=(( {'label':'Overview', 'action':'manage_overview'},
