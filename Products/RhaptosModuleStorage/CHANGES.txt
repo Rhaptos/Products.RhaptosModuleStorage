@@ -1,3 +1,6 @@
+RhaptosModuleStorage-1.4.0
+  - Store roles as groups in DB
+
 RhaptosModuleStorage-1.3.0
   - Store password hashes in DB
 
